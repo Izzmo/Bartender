@@ -161,7 +161,7 @@ global.bartender = {
       var msg = 'DJ Play Counts: ';
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
-        if(undefined === user) return;
+        if(undefined === user) continue;
         if(i > 0) msg += ', ';
         msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
       }
@@ -171,7 +171,7 @@ global.bartender = {
       var msg = 'Wait Counts: ';
       for(var i = 0; i < this.moderation.waitingList.length; i++) {
         var user = this.room.users[this.moderation.waitingList[i].userid];
-        if(undefined === user) return;
+        if(undefined === user) continue;
         if(i > 0) msg += ', ';
         msg += user.name + ': ' + (this.moderation.songsWait - this.moderation.waitingList[i].plays) + ' songs';
       }
