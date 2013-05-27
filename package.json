@@ -32,5 +32,8 @@
   "bundleDependencies": [],
 
   "private": true,
-  "main": "bartender2.js"
+  "main": "./bartender2.js",
+  scripts: {
+    "start": "node ./bartender.js"
+  }
 }
