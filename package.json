@@ -1,19 +1,20 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "Bartender",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "description": "A room moderation bot for turntable.fm.",
   "keywords": [
-    "OpenShift",
+    "Turntable-api",
     "Node.js",
     "application",
-    "openshift"
+    "turntable.fm",
+    "bot"
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url":  "http://www.openshift.com/"
+    "name": "Izzmo",
+    "email": "me@izzmo.com",
+    "url":  "http://izzmo.com/"
   },
-  "homepage": "http://www.openshift.com/",
+  "homepage": "http://izzmo.com/",
   "repository": {
     "type": "git",
     "url": "https://gitub.com/openshift/origin-server"
@@ -25,10 +26,11 @@
   },
 
   "dependencies": {
+    "ttapi": ">= 1.3.0"
   },
   "devDependencies": {},
   "bundleDependencies": [],
 
   "private": true,
-  "main": "server.js"
+  "main": "bartender.js"
 }
