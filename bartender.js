@@ -829,11 +829,11 @@ global.bartender = {
         break;
         
       case 'plays':
-        this.bot.pm(this.moderation.getDjCounts(), userid);
+        this.bot.pm(this.moderation.getDjCounts.call(global.bartender), userid);
         break;
         
       case 'wait':
-        this.bot.pm(this.moderation.getWaitCounts(), userid);
+        this.bot.pm(this.moderation.getWaitCounts.call(global.bartender), userid);
         break;
         
       case 'moderation':
@@ -875,7 +875,7 @@ global.bartender = {
         if(null === found)
           this.bot.pm("User not found in room.", userid);
         else {
-          this.moderation.addDjBan(found, username, duration);
+          this.moderation.addDjBan.call(global.bartender, found, username, duration);
           this.bot.pm(username + " added to the banned dj's list for " + duration + " hours.", userid);
         }
         break;
@@ -883,14 +883,14 @@ global.bartender = {
       case 'unbandj':
         if(!this.isMod(userid)) return;
         
-        if(this.moderation.remDjBan(params))
+        if(this.moderation.remDjBan.call(global.bartender, params))
           this.bot.pm(params + " was removed from the banned dj's list.", userid);
         else
           this.bot.pm(params + " was not found.", userid);
         break;
         
       case 'banneddjs':
-        this.bot.pm(this.moderation.getBannedDjs(), userid);
+        this.bot.pm(this.moderation.getBannedDjs.call(global.bartender), userid);
         break;
     }
   },
