@@ -33,7 +33,7 @@
 
   "private": true,
   "main": "./bartender2.js",
-  scripts: {
+  "scripts": {
     "start": "node ./bartender.js"
   }
 }
