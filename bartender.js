@@ -953,5 +953,5 @@ global.bartender = {
     return user.acl > 0;
   }
 };
-module.exports = global.bartender.init(true); // expose class object
+module.exports = global.bartender.init(false); // expose class object
 
