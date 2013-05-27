@@ -655,6 +655,12 @@ global.bartender = {
         this.bot.speak(params);
         break;
         
+      case 'dive':
+      case 'stagedive':
+        if(this.isDj(userid))
+          this.bot.remDj(userid);
+        break;
+        
       case 'vote':
         if(!this.isMod(userid)) return;
         if(params == "awesome" || params == "up")
