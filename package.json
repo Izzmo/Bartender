@@ -32,5 +32,5 @@
   "bundleDependencies": [],
 
   "private": true,
-  "main": "bartender.js"
+  "main": "server.js"
 }
