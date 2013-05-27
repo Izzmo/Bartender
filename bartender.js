@@ -365,10 +365,15 @@ global.bartender = {
 
     this.bot.on('add_dj', function(d) {
       global.bartender.moderation.addDj.call(global.bartender, d.user[0].userid);
+      global.bartender.room.djs.push(d.user[0].userid);
     });
 
     this.bot.on('rem_dj', function(d) {
       global.bartender.moderation.remDj.call(global.bartender, d.user[0].userid);
+      for(var i = 0, l = global.bartender.room.djs.length; i < l; i++) {
+        if(d.user[0].userid == global.bartender.room.djs[i])
+          global.bartender.room.djs.splice(i, 1);
+      }
     });
     
     this.bot.on('speak', function(d) {
@@ -390,6 +395,12 @@ global.bartender = {
       delete this.room.users[d.user[0].userid];
     }
     this.resetAFK(d.user[0].userid, true);
+    
+    // make sure they are not in djs list
+    for(var i = 0, l = this.room.djs.length; i < l; i++) {
+      if(d.user[0].userid == this.room.djs[i])
+        this.room.djs.splice(i, 1);
+    }
   },
   newsong: function(d) {
     // send message to chat
