@@ -183,7 +183,7 @@ global.bartender = {
       for(var i = 0; i < this.room.djs.length; i++) {
         var found = false;
         for(var j = 0; j < this.moderation.djPlays.length; j++) {
-          if(this.moderation.djPlays[i].userid == this.room.djs[j]) {
+          if(this.moderation.djPlays[j].userid == this.room.djs[i]) {
             found = true;
             djList.push(this.moderation.djPlays[j]);
             break;
