@@ -435,6 +435,7 @@ global.bartender = {
     // setup songKick timer
     clearTimeout(this.songKickTimer);
     this.songKickTimer = setTimeout(function() {
+      global.bartender.bot.pm('Looks like your song froze, so we had to remove you from the deck.', global.bartender.room.currentSong.dj.id);
       global.bartender.bot.remDj(global.bartender.room.currentSong.dj.id);
     }, (this.room.currentSong.length + 10) * 1000);
     
