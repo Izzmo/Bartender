@@ -179,6 +179,7 @@ global.bartender = {
     },
     checkDjList: function() {
       // get updated dj list
+      console.log('in function, scope:');console.log(this);
       var djList = [];
       for(var i = 0; i < this.room.djs.length; i++) {
         var found = false;
@@ -441,7 +442,9 @@ global.bartender = {
     
     // moderation actions
     if(this.moderation.activated) {
-      this.moderation.checkDjList.call(this);
+      console.log('newsong, scope:');console.log(this);
+      this.moderation.checkDjList();
+      //this.moderation.checkDjList.call(this);
       this.moderation.addWaitPlayAll.call(this);
       this.moderation.checkDjCounts.call(this);
       this.moderation.checkWaitCounts.call(this);
