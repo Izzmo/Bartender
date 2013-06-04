@@ -973,6 +973,6 @@ global.bartender = {
   }
 };
 global.bartender.init(false); // expose class object
-global.bartender.bot.debug = true;
+//global.bartender.bot.debug = true;
 
 //repl.start('> ').context.bartender = global.bartender; // allow you to control the bot from the REPL session.
