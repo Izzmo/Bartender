@@ -441,15 +441,16 @@ global.bartender = {
     }, (this.room.currentSong.length + 10) * 1000);
     
     // moderation actions
+    this.moderation.checkDjList.call(this);
+    this.moderation.checkDjCounts.call(this);
+    
+    // add to song count of current dj
+    this.moderation.addPlay.call(this, d.room.metadata.current_song.djid);
+    
     if(this.moderation.activated) {
-      this.moderation.checkDjList.call(this);
       this.moderation.addWaitPlayAll.call(this);
-      this.moderation.checkDjCounts.call(this);
       this.moderation.checkWaitCounts.call(this);
       this.moderation.checkBannedDjs.call(this);
-      
-      // add to song count of current dj
-      this.moderation.addPlay.call(this, d.room.metadata.current_song.djid);
     }
     if(this.queue.activated) {
       
