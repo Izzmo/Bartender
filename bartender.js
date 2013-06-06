@@ -685,6 +685,11 @@ global.bartender = {
         }
         break;
         
+      case 'votes':
+      case 'currentvote':
+        this.bot.pm('+' + this.room.currentSong.awesomes + ', -' + this.room.currentSong.lames, userid);
+        break;
+        
       case 'drink':
         var type = Math.floor(Math.random()*3);
         var drink = "";
@@ -714,6 +719,11 @@ global.bartender = {
         this.bartend.msgList(name, params, this.bartend.drinks_tea[Math.floor(Math.random() * this.bartend.drinks_tea.length)], 1);
         break;
         
+      case 'coffee':
+      case 'joe':
+        this.bot.speak('Here you go ' + name + ', a searing hot, black cup of joe! Creamer and sugar are for pussies.');
+        break;
+        
       case 'blowjob':
         var type = Math.floor(Math.random() * 3);
         switch(type) {
@@ -730,7 +740,7 @@ global.bartender = {
         break;
         
       case 'bend':
-        this.bot.speak("Hey " + name + ", you are one sick bastard. That hole is one-way only: out.");
+        this.bot.speak("Hey " + name + ", you are one sick bastard. That hole has only one way: out.");
         break;
         
       case 'boobies':
