@@ -438,7 +438,7 @@ global.bartender = {
     this.songKickTimer = setTimeout(function() {
       global.bartender.bot.pm('Looks like your song froze, so we had to remove you from the deck.', global.bartender.room.currentSong.dj.id);
       global.bartender.bot.remDj(global.bartender.room.currentSong.dj.id);
-    }, (this.room.currentSong.length + 10) * 1000);
+    }, (this.room.currentSong.length + 15) * 1000);
     
     // moderation actions
     this.moderation.checkDjList.call(this);
