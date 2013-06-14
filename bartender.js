@@ -1006,7 +1006,7 @@ http.createServer(function(req, res) {
   switch(params.pathname) {
     case '/':      
       body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
-      body += '<p>' + this.getUptime(null, true) + '</p>';
+      body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
       break;
     
     case '/remove-dnd24':
