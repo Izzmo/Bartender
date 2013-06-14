@@ -956,7 +956,7 @@ global.bartender = {
     else
       uptime += "00";
 
-    if(undefined !== rtn)
+    if(undefined === rtn)
       callback("Uptime: " + uptime);
     else
       return "Uptime: " + uptime;
