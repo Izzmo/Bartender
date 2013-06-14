@@ -924,7 +924,7 @@ global.bartender = {
         break;
     }
   },
-  getUptime: function(callback) {
+  getUptime: function(callback, rtn) {
     var seconds = (new Date() - this.start_time) / 1000;
     var minutes = seconds / 60;
     var hours = minutes / 60;
@@ -955,8 +955,11 @@ global.bartender = {
     }
     else
       uptime += "00";
-    
-    callback("Uptime: " + uptime);
+
+    if(undefined !== rtn)
+      callback("Uptime: " + uptime);
+    else
+      return "Uptime: " + uptime;
   },
   
   /**
@@ -987,3 +990,46 @@ global.bartender.init(false); // expose class object
 //global.bartender.bot.debug = true;
 
 //repl.start('> ').context.bartender = global.bartender; // allow you to control the bot from the REPL session.
+
+
+/**
+ * Web Service
+ */
+var http = require('http'),
+    url = require('url');
+http.createServer(function(req, res) {
+  var body = '',
+      code = 200,
+      params = url.parse(req.url, true);
+      
+  // determine what page we are on
+  switch(params.pathname) {
+    case '/':      
+      body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
+      body += '<p>' + this.getUptime(null, true) + '</p>';
+      break;
+    
+    case '/remove-dnd24':
+      if(undefined === params.query || undefined === params.query.rid || params.query.rid.length < 10) {
+        code = 400;
+        body += 'Please include a roomid.';
+      }
+      else {
+        if(global.botMaster.remove24hourDND(params.query.rid))
+          body += '<p>Room found and removed.</p>';
+        else
+          body += '<p>Room not found on DND-24 List.</p>';
+      }
+      body += '<p><a href="/">Back</a></p>';
+      break;
+      
+    default:
+      code = 404;
+      body = '<h1>404 Not Found</h1><p>Could not find resource.</p>';
+  }
+  
+  // write response to user
+  res.writeHead(code, { 'Content-Type': "text/html" });
+  res.write('<html><head><title>Bartender Bot\'</title></head><body>' + body + '</body></html>');
+  res.end();
+}).listen(process.env.OPENSHIFT_NODEJS_PORT, process.env.OPENSHIFT_NODEJS_IP);
