@@ -1007,6 +1007,15 @@ http.createServer(function(req, res) {
     case '/':      
       body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
       body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
+      body += '<p><a href="/restart">Restart Bartender</a></p>';
+      break;
+      
+    case '/restart':
+      if(global.bartender.bot !== null || global.bartender.bot !== undefined) {
+        global.bartender.bot.close();
+        global.bartender.init();
+      }
+      body += '<p>Bartender restarted. <a href="/">Go back</a>.</p>';
       break;
     
     case '/remove-dnd24':
