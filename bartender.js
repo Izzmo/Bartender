@@ -239,6 +239,7 @@ global.bartender = {
       }
     },
     djBanned: function(userid) {
+      this.moderation.checkBannedDjs.call(this);
       for(var i = 0; i < this.moderation.bannedDjs.length; i++) {
         if(this.moderation.bannedDjs[i].userid === userid)
           return true;
@@ -447,10 +448,12 @@ global.bartender = {
     // add to song count of current dj
     this.moderation.addPlay.call(this, d.room.metadata.current_song.djid);
     
+    // check banned dj's list for expired users
+    this.moderation.checkBannedDjs.call(this);
+    
     if(this.moderation.activated) {
       this.moderation.addWaitPlayAll.call(this);
       this.moderation.checkWaitCounts.call(this);
-      this.moderation.checkBannedDjs.call(this);
     }
     if(this.queue.activated) {
       
