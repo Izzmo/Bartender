@@ -2,6 +2,7 @@
 
 var Bot = require('ttapi');
 var repl = require('repl');
+var fs = require('fs');
 
 global.bartender = {
   /**
@@ -71,7 +72,8 @@ global.bartender = {
     songsWait: 2,
     djPlays: [],
     waitingList: [],
-    bannedDjs: [], // { userid, username, time }
+    bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
+    bannedUsers: [], // userid, username, time } --- Users banned from room
     addDj: function(userid) {
       // check to see if user is banned
       if(this.moderation.djBanned.call(this, userid)) {
@@ -245,6 +247,54 @@ global.bartender = {
           return true;
       }
       return false;
+    },
+    banUser: function(userid, username) {
+      // check to see if user already exists in list
+      for(var i = 0, l = this.bannedUsers.length; i < l; i++) {
+        if(this.bannedUsers[i].userid === userid) {
+          // user already exists, break and send message
+          return false;
+        }
+      }
+      this.bannedUsers.push({ userid: userid, username: username, time: (new Date()).getTime() });
+      this.writeBannedUsersFile();
+      if(this.isInRoom.call(global.bartender, userid))
+        this.bot.bootUser(userid, 'Sorry, you have been permanently banned from this room.');
+      return true;
+    },
+    unBanUser: function(userid) {
+      // check to see if user exists in list
+      var found = -1;
+      for(i = 0, l = this.bannedUsers.length; i < l; i++) {
+        if(this.bannedUsers[i].userid === userid) {
+          found = i;
+          break;
+        }
+      }
+      if(found < 0) return false;
+      this.bannedUsers.splice(found, 1);
+      this.writeBannedUsersFile();
+      return true;
+    },
+    userBannedFromRoom: function(userid) {
+      for(var i = 0, l = this.bannedUsers.length; i < l; i++) {
+        if(this.bannedUsers[i].userid === userid)
+          return true;
+      }
+      return false;
+    },
+    getBannedUsers: function() {
+      var users = 'Banned Users: ';
+      for(var i = 0, l = this.bannedUsers.length; i < l; i++) {
+        if(i > 0) users += ', ';
+        users += this.bannedUsers[i].username;
+      }
+      return users;
+    },
+    writeBannedUsersFile: function() {
+      fs.writeFile(process.env.OPENSHIFT_DATA_DIR + 'banned_users.txt', JSON.stringify(this.bannedUsers), function(err) {
+        if(err) { console.log('There was an error while writing the banned users\' file:'); console.log(err); }
+      });
     }
   },
   queue: {
@@ -312,6 +362,13 @@ global.bartender = {
     
     // set start_time
     this.start_time = (new Date()).getTime();
+    
+    // read and set Banned Users list
+    fs.readFile(process.env.OPENSHIFT_DATA_DIR + 'banned_users.txt', function(err, data) {
+      if(err) { console.log('Error while getting banned users\' list: '); console.log(err); return false; }
+      this.moderation.bannedUsers = JSON.parse(data);
+      return true;
+    });
     
     // event handlers
     this.bot.on('roomChanged', function(d) {
@@ -925,6 +982,57 @@ global.bartender = {
       case 'banneddjs':
         this.bot.pm(this.moderation.getBannedDjs.call(global.bartender), userid);
         break;
+        
+      case 'bannedusers':
+        if(!this.isMod(userid)) return;
+        this.bot.pm(this.moderation.getBannedUsers(), userid);
+        break;
+        
+      case 'banuser':
+        if(!this.isMod(userid)) return;
+        var username = params.substring(0, params.lastIndexOf(' ')),
+            found = null;
+
+        if(!username.length)
+          this.bot.pm("Please enter a username to ban.", userid);
+        
+        for(var a in this.room.users) {
+          if(username.toLowerCase() === this.room.users[a].name.toLowerCase()) {
+            found = this.room.users[a].userid;
+            break;
+          }
+        }
+        
+        if(null === found)
+          this.bot.pm("User not found in room.", userid);
+        else {
+          if(this.moderation.banUser(found, username))
+            this.bot.pm(username + " has been banned from the room.", userid);
+          else
+            this.bot.pm(username + " is already banned from the room.", userid);
+        }
+        break;
+        
+      case 'banuserid':
+        if(!this.isMod(userid)) return;
+        var userid = params.substring(0, params.lastIndexOf(' '));
+        if(!userid.length)
+          this.bot.pm("Please enter a userid to ban.", userid);
+        
+        if(this.moderation.banUser(userid, userid))
+            this.bot.pm(userid + " has been banned from the room.", userid);
+          else
+            this.bot.pm(userid + " is already banned from the room.", userid);
+        break;
+        
+      case 'unbanuser':
+        if(!this.isMod(userid)) return;
+        break;
+        
+      case 'unbanuserid':
+        if(!this.isMod(userid)) return;
+        
+        break;
     }
   },
   getUptime: function(callback, rtn) {
@@ -968,6 +1076,13 @@ global.bartender = {
   /**
    * Helper Methods
    */
+  isInRoom: function(userid) {
+    var found = null;
+    for(var a in this.room.users) {
+      if(a === userid) return true;
+    }
+    return false;
+  },
   isDj: function(userid) {
     for(var i = 0, l = this.room.djs.length; i < l; i++) {
       if(this.room.djs[i] == userid) return true;
