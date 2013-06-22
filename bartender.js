@@ -447,7 +447,9 @@ global.bartender = {
   },
   registered: function(d, init) {
     this.room.users[d.user[0].userid] = d.user[0];
-    if(this.welcomeCheck(d.user[0].userid) && undefined === init)
+    if(this.moderation.userBannedFromRoom(d.user[0].userid))
+      this.bot.bootUser(d.user[0].userid, "Sorry, you have been permanently banned from this room.");
+    else if(this.welcomeCheck(d.user[0].userid) && undefined === init)
       this.bot.pm('Welcome to the Dubstep room! Type /roominfo to see what this room is all about and to learn the rules for getting up on deck. Type /help to learn more about my commands.', d.user[0].userid);
     this.resetAFK(d.user[0].userid, false);
   },
