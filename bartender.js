@@ -262,11 +262,13 @@ global.bartender = {
         global.bartender.bot.bootUser(userid, 'Sorry, you have been permanently banned from this room.');
       return true;
     },
-    unBanUser: function(userid) {
+    unBanUser: function(userid, username) {
       // check to see if user exists in list
       var found = -1;
       for(i = 0, l = this.bannedUsers.length; i < l; i++) {
-        if(this.bannedUsers[i].userid === userid) {
+        if((userid !== null && this.bannedUsers[i].userid === userid)
+          || (userid === null && username !== undefined && this.bannedUsers[i].username === username)
+        ) {
           found = i;
           break;
         }
@@ -1020,23 +1022,32 @@ global.bartender = {
         
       case 'banuserid':
         if(!this.isMod(userid)) return;
-        var uid = params.substring(0, params.lastIndexOf(' '));
+        var uid = params;
         if(!uid.length)
           this.bot.pm("Please enter a userid to ban.", userid);
         
         if(this.moderation.banUser(uid, uid))
-            this.bot.pm(userid + " has been banned from the room.", userid);
-          else
-            this.bot.pm(userid + " is already banned from the room.", userid);
+          this.bot.pm(uid + " has been banned from the room.", userid);
+        else
+          this.bot.pm(uid + " is already banned from the room.", userid);
         break;
         
       case 'unbanuser':
         if(!this.isMod(userid)) return;
+        var uname = params;
+        if(this.moderation.unBanUser(null, uname))
+          this.bot.pm(userid + " has been UNbanned from the room.", userid);
+        else
+          this.bot.pm(userid + " was not found.", userid);
         break;
         
       case 'unbanuserid':
         if(!this.isMod(userid)) return;
-        
+        var uid = params;
+        if(this.moderation.unBanUser(uid))
+          this.bot.pm(uid + " has been UNbanned from the room.", userid);
+        else
+          this.bot.pm(uid + " was not found.", userid);
         break;
     }
   },
