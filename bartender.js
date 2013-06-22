@@ -950,10 +950,13 @@ global.bartender = {
             username = params.substring(0, params.lastIndexOf(' ')),
             found = null;
             
-        if(duration <= 0)
+        if(duration <= 0) {
           this.bot.pm("Please enter an appropriate durationt to ban; it must be >= 1 hour.", userid);
-        if(!username.length)
+          return;
+        } else if(!username.length) {
           this.bot.pm("Please enter a username to ban.", userid);
+          return;
+        }
         
         for(var a in this.room.users) {
           if(username.toLowerCase() === this.room.users[a].name.toLowerCase()) {
@@ -990,36 +993,38 @@ global.bartender = {
         
       case 'banuser':
         if(!this.isMod(userid)) return;
-        var username = params.substring(0, params.lastIndexOf(' ')),
+        var uname = params,
             found = null;
 
-        if(!username.length)
+        if(!uname.length) {
           this.bot.pm("Please enter a username to ban.", userid);
+          return;
+        }
         
         for(var a in this.room.users) {
-          if(username.toLowerCase() === this.room.users[a].name.toLowerCase()) {
+          if(uname.toLowerCase() === this.room.users[a].name.toLowerCase()) {
             found = this.room.users[a].userid;
             break;
           }
         }
         
         if(null === found)
-          this.bot.pm("User not found in room.", userid);
+          this.bot.pm("User, " + uname + ", not found in room.", userid);
         else {
-          if(this.moderation.banUser(found, username))
-            this.bot.pm(username + " has been banned from the room.", userid);
+          if(this.moderation.banUser(found, uname))
+            this.bot.pm(uname + " has been banned from the room.", userid);
           else
-            this.bot.pm(username + " is already banned from the room.", userid);
+            this.bot.pm(uname + " is already banned from the room.", userid);
         }
         break;
         
       case 'banuserid':
         if(!this.isMod(userid)) return;
-        var userid = params.substring(0, params.lastIndexOf(' '));
-        if(!userid.length)
+        var uid = params.substring(0, params.lastIndexOf(' '));
+        if(!uid.length)
           this.bot.pm("Please enter a userid to ban.", userid);
         
-        if(this.moderation.banUser(userid, userid))
+        if(this.moderation.banUser(uid, uid))
             this.bot.pm(userid + " has been banned from the room.", userid);
           else
             this.bot.pm(userid + " is already banned from the room.", userid);
