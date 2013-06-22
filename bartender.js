@@ -1038,9 +1038,9 @@ global.bartender = {
         if(!this.isMod(userid)) return;
         var uname = params;
         if(this.moderation.unBanUser(null, uname))
-          this.bot.pm(userid + " has been UNbanned from the room.", userid);
+          this.bot.pm(uname + " has been UNbanned from the room.", userid);
         else
-          this.bot.pm(userid + " was not found.", userid);
+          this.bot.pm(uname + " was not found.", userid);
         break;
         
       case 'unbanuserid':
