@@ -267,7 +267,7 @@ global.bartender = {
       var found = -1;
       for(i = 0, l = this.bannedUsers.length; i < l; i++) {
         if((userid !== null && this.bannedUsers[i].userid === userid)
-          || (userid === null && username !== undefined && this.bannedUsers[i].username === username)
+          || (userid === null && username !== undefined && this.bannedUsers[i].username.toLowerCase() === username.toLowerCase())
         ) {
           found = i;
           break;
