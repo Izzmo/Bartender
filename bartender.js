@@ -258,7 +258,7 @@ global.bartender = {
       }
       this.bannedUsers.push({ userid: userid, username: username, time: (new Date()).getTime() });
       this.writeBannedUsersFile();
-      if(this.isInRoom.call(global.bartender, userid))
+      if(global.bartender.isInRoom.call(global.bartender, userid))
         this.bot.bootUser(userid, 'Sorry, you have been permanently banned from this room.');
       return true;
     },
