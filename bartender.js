@@ -443,7 +443,6 @@ global.bartender = {
     
     // moderation actions
     this.moderation.checkDjList.call(this);
-    this.moderation.checkDjCounts.call(this);
     
     // add to song count of current dj
     this.moderation.addPlay.call(this, d.room.metadata.current_song.djid);
@@ -454,6 +453,7 @@ global.bartender = {
     if(this.moderation.activated) {
       this.moderation.addWaitPlayAll.call(this);
       this.moderation.checkWaitCounts.call(this);
+      this.moderation.checkDjCounts.call(this);
     }
     if(this.queue.activated) {
       
