@@ -366,7 +366,7 @@ global.bartender = {
     // read and set Banned Users list
     fs.readFile(process.env.OPENSHIFT_DATA_DIR + 'banned_users.txt', function(err, data) {
       if(err) { console.log('Error while getting banned users\' list: '); console.log(err); return false; }
-      this.moderation.bannedUsers = JSON.parse(data);
+      global.bartender.moderation.bannedUsers = JSON.parse(data);
       return true;
     });
     
