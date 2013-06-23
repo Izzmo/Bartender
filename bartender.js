@@ -150,22 +150,24 @@ global.bartender = {
       this.moderation.waitlingList = list;
     },
     setDjPlaysCount: function(userid, count) {
-      if(count > this.moderation.songsPerDj) return;
+      if(count > this.moderation.songsPerDj) return false;
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].userid == userid) {
           this.moderation.djPlays[i].plays = count;
           break;
         }
       }
+      return true;
     },
     setWaitCount: function(userid, count) {
-      if(count > this.moderation.songsWait) return;
+      if(count > this.moderation.songsWait) return false;
       for(var i = 0; i < this.moderation.waitingList.length; i++) {
         if(this.moderation.waitingList[i].userid == userid) {
           this.moderation.waitingList[i].plays = count;
           break;
         }
       }
+      return true;
     },
     getDjCounts: function() {
       var msg = 'DJ Play Counts: ';
@@ -937,6 +939,28 @@ global.bartender = {
         this.bot.pm(this.moderation.getWaitCounts.call(global.bartender), userid);
         break;
         
+      case 'setplays':
+        if(!this.isMod(userid)) return;
+        var count = parseInt(params.substring(params.lastIndexOf(' ') + 1)),
+            uname = params.substring(0, params.lastIndexOf(' ')),
+            user = this.findUser(uname);
+        if(this.moderation.setDjPlaysCount(user.userid, count))
+          this.bot.pm(user.name + '\'s play count has been updated to ' + count + '.', userid);
+        else
+          this.bot.pm('The amount you entered is more than the maximum allowed.', userid);
+        break;
+        
+      case 'setwait':
+        if(!this.isMod(userid)) return;
+        var count = parseInt(params.substring(params.lastIndexOf(' ') + 1)),
+            uname = params.substring(0, params.lastIndexOf(' ')),
+            user = this.findUser(uname);
+        if(this.moderation.setWaitCount(user.userid, count))
+          this.bot.pm(user.name + '\'s wait count has been updated to ' + count + '.', userid);
+        else
+          this.bot.pm('The amount you entered is more than the maximum allowed.', userid);
+        break;
+        
       case 'moderation':
         if(!this.isMod(userid)) return;
         if(params == "on")
@@ -1102,11 +1126,14 @@ global.bartender = {
    * Helper Methods
    */
   isInRoom: function(userid) {
-    var found = null;
-    for(var a in this.room.users) {
+    for(var a in this.room.users)
       if(a === userid) return true;
-    }
     return false;
+  },
+  findUser: function(username) {
+    for(var a in this.room.users)
+      if(this.room.users[a].name === username) return this.room.users[a];
+    return null;
   },
   isDj: function(userid) {
     for(var i = 0, l = this.room.djs.length; i < l; i++) {
