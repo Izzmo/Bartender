@@ -150,20 +150,20 @@ global.bartender = {
       this.moderation.waitlingList = list;
     },
     setDjPlaysCount: function(userid, count) {
-      if(count > this.moderation.songsPerDj) return false;
-      for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        if(this.moderation.djPlays[i].userid == userid) {
-          this.moderation.djPlays[i].plays = count;
+      if(count > this.songsPerDj) return false;
+      for(var i = 0; i < this.djPlays.length; i++) {
+        if(this.djPlays[i].userid == userid) {
+          this.djPlays[i].plays = count;
           break;
         }
       }
       return true;
     },
     setWaitCount: function(userid, count) {
-      if(count > this.moderation.songsWait) return false;
-      for(var i = 0; i < this.moderation.waitingList.length; i++) {
-        if(this.moderation.waitingList[i].userid == userid) {
-          this.moderation.waitingList[i].plays = count;
+      if(count > this.songsWait) return false;
+      for(var i = 0; i < this.waitingList.length; i++) {
+        if(this.waitingList[i].userid == userid) {
+          this.waitingList[i].plays = count;
           break;
         }
       }
@@ -407,7 +407,7 @@ global.bartender = {
         
         // add current dj's
         for(i = 0, l = d.djids.length; i < l; i++)
-          global.bartender.moderation.addDj(d.djids[i]);
+          global.bartender.moderation.addDj.call(global.bartender, d.djids[i]);
       }
       else {
         // temporary ban or room is full, try again... 
