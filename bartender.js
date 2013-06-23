@@ -70,7 +70,7 @@ global.bartender = {
     activated: false,
     songsPerDj: 2,
     songsWait: 2,
-    djPlays: [],
+    djPlays: [], // { userid, plays, timer }
     waitingList: [],
     bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
     bannedUsers: [], // userid, username, time } --- Users banned from room
@@ -86,16 +86,23 @@ global.bartender = {
         var found = false;
         if(this.moderation.djPlays[i].userid == userid) {
           found = true;
+          clearTimeout(this.moderation.djPlays[i].timer);
+          this.moderation.djPlays[i].timer = 0;
           break;
         }
       }
       if(!found)
-        this.moderation.djPlays.push({ userid: userid, plays: 0 });
+        this.moderation.djPlays.push({ userid: userid, plays: 0, timer: 0 });
     },
     remDj: function(userid) {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].userid == userid) {
-          this.moderation.djPlays.splice(i, 1);
+          (function() {
+            var djPos = i;
+            setTimeout(function() {
+              global.bartender.moderation.djPlays.splice(djPos, 1);
+            }, 600000);
+          })();
           break;
         }
       }
@@ -164,7 +171,7 @@ global.bartender = {
       var msg = 'DJ Play Counts: ';
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
-        if(undefined === user) continue;
+        if(undefined === user || this.moderation.djPlays[i].timer > 0) continue;
         if(i > 0) msg += ', ';
         msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
       }
