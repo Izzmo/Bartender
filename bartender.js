@@ -99,7 +99,7 @@ global.bartender = {
         if(this.moderation.djPlays[i].userid == userid) {
           (function() {
             var djPos = i;
-            setTimeout(function() {
+            global.bartender.moderation.djPlays[i].timer = setTimeout(function() {
               global.bartender.moderation.djPlays.splice(djPos, 1);
             }, 600000);
           })();
