@@ -402,9 +402,12 @@ global.bartender = {
         global.bartender.room.djs = d.djids;
         
         // register all current users of room
-        for(var i = 0, l = d.users.length; i < l; i++) {
+        for(var i = 0, l = d.users.length; i < l; i++)
           global.bartender.registered({ "user": [ d.users[i] ] }, true);
-        }
+        
+        // add current dj's
+        for(i = 0, l = d.djids.length; i < l; i++)
+          global.bartender.moderation.addDj(d.djids[i]);
       }
       else {
         // temporary ban or room is full, try again... 
