@@ -173,7 +173,7 @@ global.bartender = {
       var msg = 'DJ Play Counts: ';
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
-        if(undefined === user || this.moderation.djPlays[i].timer > 0) continue;
+        if(undefined === user || this.moderation.djPlays[i].timer) continue;
         if(i > 0) msg += ', ';
         msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
       }
