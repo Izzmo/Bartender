@@ -948,7 +948,7 @@ global.bartender = {
             uname = params.substring(0, params.lastIndexOf(' ')),
             user = this.findUser(uname);
         if(user === null)
-          this.bot.pm(uname + ' is not currently dj\'ing', userid);
+          this.bot.pm('Cound not find ' + uname + ' in the room.', userid);
         if(this.moderation.setDjPlaysCount(user.userid, count))
           this.bot.pm(user.name + '\'s play count has been updated to ' + count + '.', userid);
         else
@@ -961,7 +961,7 @@ global.bartender = {
             uname = params.substring(0, params.lastIndexOf(' ')),
             user = this.findUser(uname);
         if(user === null)
-          this.bot.pm(uname + ' is not currently dj\'ing', userid);
+          this.bot.pm('Cound not find ' + uname + ' in the room.', userid);
         if(this.moderation.setWaitCount(user.userid, count))
           this.bot.pm(user.name + '\'s wait count has been updated to ' + count + '.', userid);
         else
