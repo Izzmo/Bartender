@@ -79,11 +79,10 @@ global.bartender = {
       if(this.moderation.djBanned.call(this, userid)) {
         this.bot.remDj(userid);
         this.bot.pm('You are not allowed to DJ in this room right now, sorry!', userid);
-        return;
+        return false;
       }
-      
+      var found = false;
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        var found = false;
         if(this.moderation.djPlays[i].userid == userid) {
           found = true;
           clearTimeout(this.moderation.djPlays[i].timer);
@@ -93,6 +92,8 @@ global.bartender = {
       }
       if(!found)
         this.moderation.djPlays.push({ userid: userid, plays: 0, timer: 0 });
+      
+      return true;
     },
     remDj: function(userid) {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
@@ -191,11 +192,12 @@ global.bartender = {
       return msg;
     },
     checkDjList: function() {
+      return; // test to see if we really need this
       // get updated dj list
       var djList = [];
-      for(var i = 0; i < this.room.djs.length; i++) {
+      for(var i = 0; i < this.moderation.djPlays.length; i++) {
         var found = false;
-        for(var j = 0; j < this.moderation.djPlays.length; j++) {
+        for(var j = 0; j < this.room.djs.length; j++) {
           if(this.moderation.djPlays[j].userid == this.room.djs[i]) {
             found = true;
             djList.push(this.moderation.djPlays[j]);
