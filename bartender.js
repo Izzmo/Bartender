@@ -172,7 +172,7 @@ global.bartender = {
     },
     getDjCounts: function() {
       var msg = 'DJ Play Counts: ';
-      for(var i = 0; i < this.moderation.djPlays.length, count = 0; i++) {
+      for(var i = 0, count = 0; i < this.moderation.djPlays.length; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
         if(undefined === user || this.moderation.djPlays[i].timer) continue;
         if(count > 0) msg += ', ';
