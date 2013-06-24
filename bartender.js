@@ -171,11 +171,12 @@ global.bartender = {
     },
     getDjCounts: function() {
       var msg = 'DJ Play Counts: ';
-      for(var i = 0; i < this.moderation.djPlays.length; i++) {
+      for(var i = 0; i < this.moderation.djPlays.length, count = 0; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
         if(undefined === user || this.moderation.djPlays[i].timer) continue;
-        if(i > 0) msg += ', ';
+        if(count > 0) msg += ', ';
         msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
+        count++;
       }
       return msg;
     },
@@ -202,7 +203,7 @@ global.bartender = {
           }
         }
         if(!found)
-          djList.push({ userid: this.room.djs[i], plays: 0 });
+          djList.push({ userid: this.room.djs[i], plays: 0, timer: 0 });
       }
       this.moderation.djPlays = djList;
     },
