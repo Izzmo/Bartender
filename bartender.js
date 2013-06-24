@@ -950,8 +950,10 @@ global.bartender = {
         var count = parseInt(params.substring(params.lastIndexOf(' ') + 1)),
             uname = params.substring(0, params.lastIndexOf(' ')),
             user = this.findUser(uname);
-        if(user === null)
+        if(user === null) {
           this.bot.pm('Cound not find ' + uname + ' in the room.', userid);
+          return false;
+        }
         if(this.moderation.setDjPlaysCount(user.userid, count))
           this.bot.pm(user.name + '\'s play count has been updated to ' + count + '.', userid);
         else
@@ -963,8 +965,10 @@ global.bartender = {
         var count = parseInt(params.substring(params.lastIndexOf(' ') + 1)),
             uname = params.substring(0, params.lastIndexOf(' ')),
             user = this.findUser(uname);
-        if(user === null)
+        if(user === null) {
           this.bot.pm('Cound not find ' + uname + ' in the room.', userid);
+          return false;
+        }
         if(this.moderation.setWaitCount(user.userid, count))
           this.bot.pm(user.name + '\'s wait count has been updated to ' + count + '.', userid);
         else
