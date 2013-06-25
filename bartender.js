@@ -70,7 +70,7 @@ global.bartender = {
     activated: false,
     songsPerDj: 2,
     songsWait: 2,
-    djPlays: [], // { userid, plays, timer }
+    djPlays: [], // { userid, plays, timer, added }
     waitingList: [],
     bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
     bannedUsers: [], // userid, username, time } --- Users banned from room
@@ -87,11 +87,12 @@ global.bartender = {
           found = true;
           clearTimeout(this.moderation.djPlays[i].timer);
           this.moderation.djPlays[i].timer = 0;
+          this.moderation.djPlays[i].added = (new Date()).getTime();
           break;
         }
       }
       if(!found)
-        this.moderation.djPlays.push({ userid: userid, plays: 0, timer: 0 });
+        this.moderation.djPlays.push({ userid: userid, plays: 0, timer: 0, added: (new Date()).getTime() });
       
       return true;
     },
@@ -170,13 +171,17 @@ global.bartender = {
       }
       return true;
     },
-    getDjCounts: function() {
+    getDjCounts: function(extended) {
       var msg = 'DJ Play Counts: ';
       for(var i = 0, count = 0; i < this.moderation.djPlays.length; i++) {
         var user = this.room.users[this.moderation.djPlays[i].userid];
-        if(undefined === user || this.moderation.djPlays[i].timer) continue;
+        if(extended === undefined && (undefined === user || this.moderation.djPlays[i].timer)) continue;
         if(count > 0) msg += ', ';
         msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
+        if(extended !== undefined) {
+          var time = parseInt(((new Date()).getTime() - this.moderation.djPlays[i].added) / 1000 / 60); // time on deck in minutes
+          msg += ' (' + time + ' mins, ' + (this.moderation.djPlays[i].timer ? 'waiting' : 'djing') + ')';
+        }
         count++;
       }
       return msg;
@@ -939,6 +944,10 @@ global.bartender = {
         
       case 'plays':
         this.bot.pm(this.moderation.getDjCounts.call(global.bartender), userid);
+        break;
+        
+      case 'playsext':
+        this.bot.pm(this.moderation.getDjCounts.call(global.bartender, true), userid);
         break;
         
       case 'wait':
