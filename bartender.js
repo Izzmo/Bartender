@@ -106,6 +106,7 @@ global.bartender = {
           (function() {
             var djPos = i;
             global.bartender.moderation.djPlays[i].timer = setTimeout(function() {
+              console.log('Removing ' + global.bartender.moderation.djPlays[djPos].username + ' (' + djPos + ') from dj list.');
               global.bartender.moderation.djPlays.splice(djPos, 1);
             }, 600000);
           })();
