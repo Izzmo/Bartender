@@ -178,7 +178,7 @@ global.bartender = {
     getDjCounts: function(extended) {
       var msg = 'DJ Play Counts: ';
       for(var i = 0, count = 0; i < this.moderation.djPlays.length; i++) {
-        if(extended === undefined && (undefined === user || this.moderation.djPlays[i].timer)) continue;
+        if(extended === undefined && this.moderation.djPlays[i].timer) continue;
         if(count > 0) msg += ', ';
         msg += this.moderation.djPlays[i].username + ': ' + this.moderation.djPlays[i].plays + ' songs';
         if(extended !== undefined) {
