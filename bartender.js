@@ -70,7 +70,7 @@ global.bartender = {
     activated: false,
     songsPerDj: 2,
     songsWait: 2,
-    djPlays: [], // { userid, plays, timer, added }
+    djPlays: [], // { userid, username, plays, timer, added }
     waitingList: [],
     bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
     bannedUsers: [], // userid, username, time } --- Users banned from room
@@ -91,8 +91,12 @@ global.bartender = {
           break;
         }
       }
-      if(!found)
-        this.moderation.djPlays.push({ userid: userid, plays: 0, timer: 0, added: (new Date()).getTime() });
+      if(!found) {
+        var user = this.room.users[userid];
+        if(user === undefined)
+          user = { name: userid };
+        this.moderation.djPlays.push({ userid: userid, username: user.name, plays: 0, timer: 0, added: (new Date()).getTime() });
+      }
       
       return true;
     },
@@ -174,10 +178,9 @@ global.bartender = {
     getDjCounts: function(extended) {
       var msg = 'DJ Play Counts: ';
       for(var i = 0, count = 0; i < this.moderation.djPlays.length; i++) {
-        var user = this.room.users[this.moderation.djPlays[i].userid];
         if(extended === undefined && (undefined === user || this.moderation.djPlays[i].timer)) continue;
         if(count > 0) msg += ', ';
-        msg += user.name + ': ' + this.moderation.djPlays[i].plays + ' songs';
+        msg += this.moderation.djPlays[i].username + ': ' + this.moderation.djPlays[i].plays + ' songs';
         if(extended !== undefined) {
           var time = parseInt(((new Date()).getTime() - this.moderation.djPlays[i].added) / 1000 / 60); // time on deck in minutes
           msg += ' (' + time + ' mins, ' + (this.moderation.djPlays[i].timer ? 'waiting' : 'djing') + ')';
