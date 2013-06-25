@@ -104,10 +104,14 @@ global.bartender = {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].userid == userid) {
           (function() {
-            var djPos = i;
+            var uid = userid;
             global.bartender.moderation.djPlays[i].timer = setTimeout(function() {
-              console.log('Removing ' + global.bartender.moderation.djPlays[djPos].username + ' (' + djPos + ') from dj list.');
-              global.bartender.moderation.djPlays.splice(djPos, 1);
+              for(var i = 0; i < global.bartender.moderation.djPlays.length; i++) {
+                if(global.bartender.moderation.djPlays[i].userid == uid) {
+                  global.bartender.moderation.djPlays.splice(i, 1);
+                  break;
+                }
+              }
             }, 600000);
           })();
           break;
