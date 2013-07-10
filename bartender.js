@@ -540,7 +540,7 @@ global.bartender = {
     // check banned dj's list for expired users
     this.moderation.checkBannedDjs.call(this);
     
-    if(this.moderation.activated && this.moderation.playMonitor.activated) {
+    if(this.moderation.playMonitor.activated) {
       this.moderation.addWaitPlayAll.call(this);
       this.moderation.checkWaitCounts.call(this);
       this.moderation.checkDjCounts.call(this);
@@ -988,16 +988,6 @@ global.bartender = {
           this.bot.pm(user.name + '\'s wait count has been updated to ' + count + '.', userid);
         else
           this.bot.pm('The amount you entered is more than the maximum allowed.', userid);
-        break;
-        
-      case 'moderation':
-        if(!this.isMod(userid)) return;
-        if(params == "on")
-          this.moderation.activated = true;
-        else
-          this.moderation.activated = false;
-        
-        this.bot.pm('Moderation turned ' + ((params == "on") ? 'on' : 'off') + '.', userid);
         break;
         
       case 'monitordjs':
