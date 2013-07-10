@@ -145,17 +145,16 @@ global.bartender = {
       }
     },
     checkDjCounts: function() {
-      var djList = [], waitingList = [];
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        if(this.moderation.djPlays[i].timer <= 0 && this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !global.bartender.isDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
-          waitingList.push({ userid: this.moderation.djPlays[i].userid, plays: 0 });
+        if(this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !global.bartender.isDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
+          this.moderation.playMonitor.waitingList.push({ userid: this.moderation.djPlays[i].userid, plays: 0 });
           ttBot.sendPm(this.moderation.djPlays[i].userid, 'You have played your ' + this.moderation.playMonitor.songsPerDj + ' songs, please /stagedive and wait ' + this.moderation.playMonitor.songsWait + ' songs before getting back on stage.');
-          global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
+          if(this.moderation.djPlays[i].timer <= 0)
+            global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
           //debug send izzmo pm
           ttBot.sendPm("4e3ab2f2a3f751254c049bec", 'User ' + this.moderation.djPlays[i].userid + ' has played allotted dj songs and added to wait list.');
         }
       }
-      this.moderation.playMonitor.waitingList.push(waitingList);
     },
     checkWaitCounts: function() {
       var list = [];
