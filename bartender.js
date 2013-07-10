@@ -200,11 +200,11 @@ global.bartender = {
     },
     getWaitCounts: function() {
       var msg = 'Wait Counts: ';
-      for(var i = 0; i < this.moderation.waitingList.length; i++) {
-        var user = this.room.users[this.moderation.waitingList[i].userid];
+      for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
+        var user = this.room.users[this.moderation.playMonitor.waitingList[i].userid];
         if(undefined === user) continue;
         if(i > 0) msg += ', ';
-        msg += user.name + ': ' + (this.moderation.songsWait - this.moderation.waitingList[i].plays) + ' songs';
+        msg += user.name + ': ' + (this.moderation.playMonitor.songsWait - this.moderation.playMonitor.waitingList[i].plays) + ' songs';
       }
       return msg;
     },
