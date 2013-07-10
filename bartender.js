@@ -67,13 +67,19 @@ global.bartender = {
     }
   },
   moderation: {
-    activated: false,
-    songsPerDj: 2,
-    songsWait: 2,
     djPlays: [], // { userid, username, plays, timer, added }
-    waitingList: [],
     bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
     bannedUsers: [], // userid, username, time } --- Users banned from room
+    playMonitor: {
+      activated: false,
+      songsPerDj: 2,
+      songsWait: 2,
+      waitingList: []
+    },
+    queue: {
+      activated: false,
+      list: []
+    },
     addDj: function(userid) {
       // check to see if user is banned
       if(this.moderation.djBanned.call(this, userid)) {
@@ -127,38 +133,37 @@ global.bartender = {
       }
     },
     addWaitPlay: function(userid) {
-      for(var i = 0; i < this.moderation.waitingList.length; i++) {
-        if(this.moderation.waitingList[i].userid == userid) {
-          this.moderation.waitingList[i].plays++;
+      for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
+        if(this.moderation.playMonitor.waitingList[i].userid == userid) {
+          this.moderation.playMonitor.waitingList[i].plays++;
         }
       }
     },
     addWaitPlayAll: function() {
-      for(var i = 0; i < this.moderation.waitingList.length; i++) {
-        this.moderation.waitingList[i].plays++;
+      for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
+        this.moderation.playMonitor.waitingList[i].plays++;
       }
     },
     checkDjCounts: function() {
       var djList = [], waitingList = [];
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        if(this.moderation.djPlays[i].plays < this.moderation.songsPerDj)
-          djList.push(this.moderation.djPlays[i]);
-        else {
+        if(this.moderation.djPlays[i].timer <= 0 && this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !global.bartender.isDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
           waitingList.push({ userid: this.moderation.djPlays[i].userid, plays: 0 });
-          //debug
-          //ttBot.sendPm("4e3ab2f2a3f751254c049bec", 'User ' + this.moderation.djPlays[i].userid + ' has played allotted dj songs and added to wait list.');
+          ttBot.sendPm(this.moderation.djPlays[i].userid, 'You have played your ' + this.moderation.playMonitor.songsPerDj + ' songs, please /stagedive and wait ' + this.moderation.playMonitor.songsWait + ' songs before getting back on stage.');
+          global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
+          //debug send izzmo pm
+          ttBot.sendPm("4e3ab2f2a3f751254c049bec", 'User ' + this.moderation.djPlays[i].userid + ' has played allotted dj songs and added to wait list.');
         }
       }
-      this.moderation.djPlays = djList;
-      this.moderation.waitingList.push(waitingList);
+      this.moderation.playMonitor.waitingList.push(waitingList);
     },
     checkWaitCounts: function() {
       var list = [];
-      for(var i = 0; i < this.moderation.waitingList.length; i++) {
-        if(this.moderation.waitingList[i].plays < this.moderation.songsWait)
-          list.push(this.moderation.waitlingList[i]);
+      for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
+        if(this.moderation.playMonitor.waitingList[i].plays < this.moderation.playMonitor.songsWait)
+          list.push(this.moderation.playMonitor.waitlingList[i]);
       }
-      this.moderation.waitlingList = list;
+      this.moderation.playMonitor.waitlingList = list;
     },
     setDjPlaysCount: function(userid, count) {
       if(count > this.songsPerDj) return false;
@@ -323,10 +328,6 @@ global.bartender = {
         if(err) { console.log('There was an error while writing the banned users\' file:'); console.log(err); }
       });
     }
-  },
-  queue: {
-    activated: false,
-    list: []
   },
   room: { // holds real-time information for the turntable.fm room
     name: '',
@@ -539,13 +540,10 @@ global.bartender = {
     // check banned dj's list for expired users
     this.moderation.checkBannedDjs.call(this);
     
-    if(this.moderation.activated) {
+    if(this.moderation.activated && this.moderation.playMonitor.activated) {
       this.moderation.addWaitPlayAll.call(this);
       this.moderation.checkWaitCounts.call(this);
       this.moderation.checkDjCounts.call(this);
-    }
-    if(this.queue.activated) {
-      
     }
   },
   updateVotes: function(d) {
@@ -603,7 +601,7 @@ global.bartender = {
     
     // check for exact identifiers before moving on
     // currently just for seeing if the user is trying to add to queue
-    if(command.search(/\/?\-?\+?(q|queue|que)\+?\-?\??$/i) == 0 && !this.queue.activated)
+    if(command.search(/\/?\-?\+?(q|queue|que)\+?\-?\??$/i) == 0 && !this.moderation.queue.activated)
       return this.bot.speak(((name.search(/^@/) == 0) ? name : '@'+name) + ', this room does NOT have a queue. For more information, type /roominfo.');
     
     if(d.command == "speak" && !hasSlash) return;
@@ -1002,12 +1000,22 @@ global.bartender = {
         this.bot.pm('Moderation turned ' + ((params == "on") ? 'on' : 'off') + '.', userid);
         break;
         
+      case 'monitordjs':
+        if(!this.isMod(userid)) return;
+        if(params == "on")
+          this.moderation.playMonitor.activated = true;
+        else
+          this.moderation.playMonitor.activated = false;
+        
+        this.bot.pm('Play Monitor turned ' + ((params == "on") ? 'on' : 'off') + '.', userid);
+        break;
+        
       case 'queue':
         if(!this.isMod(userid)) return;
         if(params == "on")
-          this.queue.activated = true;
+          this.moderation.queue.activated = true;
         else
-          this.queue.activated = false;
+          this.moderation.queue.activated = false;
         break;
         
       case 'bandj':
