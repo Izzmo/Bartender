@@ -173,7 +173,7 @@ global.bartender = {
       var list = [];
       for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
         if(this.moderation.playMonitor.waitingList[i].plays < this.moderation.playMonitor.songsWait)
-          list.push(this.moderation.playMonitor.waitlingList[i]);
+          list.push(this.moderation.playMonitor.waitingList[i]);
       }
       this.moderation.playMonitor.waitingList = list;
     },
