@@ -120,7 +120,7 @@ global.bartender = {
     remDj: function(userid) {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].userid == userid) {
-          if(this.moderation.playMonitor.activated) {
+          if(this.moderation.playMonitor.activated && this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj) {
             this.moderation.djPlays.splice(i, 1);
           }
           else {
