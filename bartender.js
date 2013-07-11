@@ -175,7 +175,7 @@ global.bartender = {
         if(this.moderation.playMonitor.waitingList[i].plays < this.moderation.playMonitor.songsWait)
           list.push(this.moderation.playMonitor.waitlingList[i]);
       }
-      this.moderation.playMonitor.waitlingList = list;
+      this.moderation.playMonitor.waitingList = list;
     },
     setDjPlaysCount: function(userid, count) {
       if(count > this.songsPerDj) return false;
