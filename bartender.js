@@ -74,7 +74,7 @@ global.bartender = {
       activated: false,
       songsPerDj: 2,
       songsWait: 2,
-      waitingList: []
+      waitingList: [] // { userid, username, plays }
     },
     queue: {
       activated: false,
@@ -86,6 +86,17 @@ global.bartender = {
         this.bot.remDj(userid);
         this.bot.pm('You are not allowed to DJ in this room right now, sorry!', userid);
         return false;
+      }
+      // check to see if on wait if play monitor on
+      if(this.moderation.playMonitor.activated) {
+        for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
+          if(this.moderation.playMonitor.waitingList[i].userid === userid) {
+            var countWait = this.moderation.playMonitor.songsWait - this.moderation.playMonitor.waitingList[i].plays;
+            this.bot.remDj(userid);
+            this.bot.pm('You must wait ' + countWait + ' ' + (countWait == 1 ? 'song' : 'songs') + ' before you can get back on deck.', userid);
+            return false;
+          }
+        }
       }
       var found = false;
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
@@ -109,17 +120,22 @@ global.bartender = {
     remDj: function(userid) {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].userid == userid) {
-          (function() {
-            var uid = userid;
-            global.bartender.moderation.djPlays[i].timer = setTimeout(function() {
-              for(var i = 0; i < global.bartender.moderation.djPlays.length; i++) {
-                if(global.bartender.moderation.djPlays[i].userid == uid) {
-                  global.bartender.moderation.djPlays.splice(i, 1);
-                  break;
+          if(this.moderation.playMonitor.activated) {
+            this.moderation.djPlays.splice(i, 1);
+          }
+          else {
+            (function() {
+              var uid = userid;
+              global.bartender.moderation.djPlays[i].timer = setTimeout(function() {
+                for(var i = 0; i < global.bartender.moderation.djPlays.length; i++) {
+                  if(global.bartender.moderation.djPlays[i].userid == uid) {
+                    global.bartender.moderation.djPlays.splice(i, 1);
+                    break;
+                  }
                 }
-              }
-            }, 600000);
-          })();
+              }, 600000);
+            })(); 
+          }
           break;
         }
       }
@@ -147,12 +163,9 @@ global.bartender = {
     checkDjCounts: function() {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !global.bartender.isDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
-          this.moderation.playMonitor.waitingList.push({ userid: this.moderation.djPlays[i].userid, plays: 0 });
+          this.moderation.playMonitor.waitingList.push({ userid: this.moderation.djPlays[i].userid, username: this.moderation.djPlays[i].username, plays: 0 });
           this.bot.pm('You have played your ' + this.moderation.playMonitor.songsPerDj + ' songs, please /stagedive and wait ' + this.moderation.playMonitor.songsWait + ' songs before getting back on stage.', this.moderation.djPlays[i].userid);
-          if(this.moderation.djPlays[i].timer <= 0)
-            global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
-          //debug send izzmo pm
-          this.bot.pm('User ' + this.moderation.djPlays[i].userid + ' has played allotted dj songs and added to wait list.', "4e3ab2f2a3f751254c049bec");
+          global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
         }
       }
     },
