@@ -162,10 +162,10 @@ global.bartender = {
     },
     checkDjCounts: function() {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        if(this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !global.bartender.isDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
+        if(this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !this.isCurrentDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
           this.moderation.playMonitor.waitingList.push({ userid: this.moderation.djPlays[i].userid, username: this.moderation.djPlays[i].username, plays: 0 });
           this.bot.pm('You have played your ' + this.moderation.playMonitor.songsPerDj + ' songs, please /stagedive and wait ' + this.moderation.playMonitor.songsWait + ' songs before getting back on stage.', this.moderation.djPlays[i].userid);
-          global.bartender.bot.remDj(this.moderation.djPlays[i].userid);
+          this.bot.remDj(this.moderation.djPlays[i].userid);
         }
       }
     },
@@ -1181,6 +1181,9 @@ global.bartender = {
       if(this.room.djs[i] == userid) return true;
     }
     return false;
+  },
+  isCurrentDj: function(userid) {
+    return userid === this.room.currentSong.dj.id;
   },
   isMod: function(userid) {
     if(this.isSuperMod(userid)) return true;
