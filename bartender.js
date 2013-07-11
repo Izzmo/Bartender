@@ -961,6 +961,7 @@ global.bartender = {
         break;
         
       case 'plays':
+      case /^(bot|bender) (djs|dj|plays|play)$/:
         this.bot.pm(this.moderation.getDjCounts.call(global.bartender), userid);
         break;
         
@@ -969,6 +970,7 @@ global.bartender = {
         break;
         
       case 'wait':
+      case /^(bot|bender) (wait|waits)$/:
         this.bot.pm(this.moderation.getWaitCounts.call(global.bartender), userid);
         break;
         
