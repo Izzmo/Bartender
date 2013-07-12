@@ -74,7 +74,9 @@ global.bartender = {
       activated: false,
       songsPerDj: 2,
       songsWait: 2,
-      waitingList: [] // { userid, username, plays }
+      waitingList: [], // { userid, username, plays }
+      seatOpenTimerAmount: 30000,
+      seatOpenTimer: 0 // if a seat is open more than seatOpenTimerAmount, then the wait list will be cleared.
     },
     queue: {
       activated: false,
@@ -115,6 +117,11 @@ global.bartender = {
         this.moderation.djPlays.push({ userid: userid, username: user.name, plays: 0, timer: 0, added: (new Date()).getTime() });
       }
       
+      // check if deck is full
+      if(this.room.djs.length === this.room.maxDjs) {
+        clearTimeout(this.moderation.playMonitor.seatOpenTimer);
+      }
+      
       return true;
     },
     remDj: function(userid) {
@@ -139,6 +146,13 @@ global.bartender = {
           break;
         }
       }
+      // start the seatOpenTimer until all seats are filled.
+      if(this.moderation.playMonitor.seatOpenTimer <= 0) {
+        this.moderation.playMonitor.seatOpenTimer = setTimeout(function() {
+          global.bartender.moderation.clearWaitCounts();
+          global.bartender.bot.speak("Spot open for too long; all wait counts have been cleared. Anyone is now free to get on deck!");
+        }, this.moderation.playMonitor.seatOpenTimerAmount);
+      }
     },
     addPlay: function(userid) {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
@@ -159,6 +173,9 @@ global.bartender = {
       for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
         this.moderation.playMonitor.waitingList[i].plays++;
       }
+    },
+    clearWaitCounts: function() {
+      global.bartender.moderation.playMonitor.waitingList = [];
     },
     checkDjCounts: function() {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
@@ -348,6 +365,7 @@ global.bartender = {
     moderatorList: [],
     users: { },
     djs: { },
+    maxDjs: 5,
     currentSong: {
       dj: {
         id: '',
@@ -466,16 +484,16 @@ global.bartender = {
     });
 
     this.bot.on('add_dj', function(d) {
-      global.bartender.moderation.addDj.call(global.bartender, d.user[0].userid);
       global.bartender.room.djs.push(d.user[0].userid);
+      global.bartender.moderation.addDj.call(global.bartender, d.user[0].userid);
     });
 
     this.bot.on('rem_dj', function(d) {
-      global.bartender.moderation.remDj.call(global.bartender, d.user[0].userid);
       for(var i = 0, l = global.bartender.room.djs.length; i < l; i++) {
         if(d.user[0].userid == global.bartender.room.djs[i])
           global.bartender.room.djs.splice(i, 1);
       }
+      global.bartender.moderation.remDj.call(global.bartender, d.user[0].userid);
     });
     
     this.bot.on('speak', function(d) {
