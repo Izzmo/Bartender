@@ -229,6 +229,7 @@ global.bartender = {
       return msg;
     },
     getWaitCounts: function() {
+      if(this.moderation.playMonitor.waitingList.length === 0) return "No one has to wait!";
       var msg = 'Wait Counts: ';
       for(var i = 0; i < this.moderation.playMonitor.waitingList.length; i++) {
         var user = this.room.users[this.moderation.playMonitor.waitingList[i].userid];
