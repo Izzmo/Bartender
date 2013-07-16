@@ -4,6 +4,7 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
+var test_mode = true;
 
 global.bartender = {
   /**
@@ -1248,7 +1249,7 @@ global.bartender = {
     return user.acl > 0;
   }
 };
-global.bartender.init(false); // expose class object
+global.bartender.init(test_mode); // expose class object
 //global.bartender.bot.debug = true;
 
 //repl.start('> ').context.bartender = global.bartender; // allow you to control the bot from the REPL session.
@@ -1267,9 +1268,14 @@ http.createServer(function(req, res) {
   // determine what page we are on
   switch(params.pathname) {
     case '/':      
-      body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
-      body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
-      body += '<p><a href="/restart">Restart Bartender</a></p>';
+      var path = './templates/home.jade'
+        , str = fs.readFileSync(path, 'utf8')
+        , fn = jade.compile(str, { filename: path, pretty: true });
+            
+      body = fn();
+      //body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
+      //body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
+      //body += '<p><a href="/restart">Restart Bartender</a></p>';
       break;
       
     case '/restart':
@@ -1301,6 +1307,7 @@ http.createServer(function(req, res) {
   
   // write response to user
   res.writeHead(code, { 'Content-Type': "text/html" });
-  res.write('<html><head><title>Bartender Bot\'</title></head><body>' + body + '</body></html>');
+  //res.write('<html><head><title>Bartender Bot\'</title></head><body>' + body + '</body></html>');
+  res.write(body);
   res.end();
-}).listen(process.env.OPENSHIFT_NODEJS_PORT, process.env.OPENSHIFT_NODEJS_IP);
+}).listen(!test_mode ? process.env.OPENSHIFT_NODEJS_PORT : process.env.PORT, !test_mode ? process.env.OPENSHIFT_NODEJS_IP : process.env.IP);
