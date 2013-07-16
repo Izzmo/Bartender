@@ -3,6 +3,7 @@
 var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
+var jade = require('jade');
 
 global.bartender = {
   /**
@@ -120,6 +121,7 @@ global.bartender = {
       // check if deck is full
       if(this.room.djs.length === this.room.maxDjs) {
         clearTimeout(this.moderation.playMonitor.seatOpenTimer);
+        this.moderation.playMonitor.seatOpenTimer = 0;
       }
       
       return true;
@@ -149,8 +151,9 @@ global.bartender = {
       // start the seatOpenTimer until all seats are filled.
       if(this.moderation.playMonitor.seatOpenTimer <= 0) {
         this.moderation.playMonitor.seatOpenTimer = setTimeout(function() {
-          global.bartender.moderation.clearWaitCounts();
           global.bartender.bot.speak("Spot open for too long; all wait counts have been cleared. Anyone is now free to get on deck!");
+          global.bartender.moderation.clearWaitCounts();
+          global.bartender.moderation.playMonitor.seatOpenTimer = 0;
         }, this.moderation.playMonitor.seatOpenTimerAmount);
       }
     },
@@ -388,6 +391,23 @@ global.bartender = {
       lameUsersList: [],
       snags: 0,
       snaggedUsersList: []
+    },
+    chat: {
+      maxMessages: 3000,
+      cache: [],
+      addMessage: function(msg) {
+        msg.time = (new Date()).getTime(); // add timestamp
+        if(this.cache.length >= maxMessages)
+          this.cache.splice(0, 1);
+        this.cache.push(msg);
+      },
+      getMessages: function() {
+        var text = [];
+        for(var i = 0, l = this.cache.length; i < l; i++) {
+          text.push("[" + (new Date(this.cache[i].time)).toGMTString() + "] " + this.cache[i].name + ": " + this.cache[i].text);
+        }
+        return text;
+      }
     }
   },
   welcomeList: [],
@@ -616,6 +636,9 @@ global.bartender = {
     var params = '';
     var userid = d.userid;
     var name = d.name;
+    
+    // add message to cache
+    this.bartender.room.chat.addMessage(d);
     
     if(d.text.indexOf("/") == 0) {
       hasSlash = true;
