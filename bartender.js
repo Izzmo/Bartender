@@ -638,7 +638,7 @@ global.bartender = {
     var name = d.name;
     
     // add message to cache
-    this.bartender.room.chat.addMessage(d);
+    this.room.chat.addMessage(d);
     
     if(d.text.indexOf("/") == 0) {
       hasSlash = true;
