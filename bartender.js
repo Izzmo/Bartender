@@ -637,8 +637,9 @@ global.bartender = {
     var userid = d.userid;
     var name = d.name;
     
-    // add message to cache
-    this.room.chat.addMessage(d);
+    // add message to cache (if chat)
+    if(d.command == "speak")
+      this.room.chat.addMessage(d);
     
     if(d.text.indexOf("/") == 0) {
       hasSlash = true;
