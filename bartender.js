@@ -397,7 +397,7 @@ global.bartender = {
       cache: [],
       addMessage: function(msg) {
         msg.time = (new Date()).getTime(); // add timestamp
-        if(this.cache.length >= maxMessages)
+        if(this.cache.length >= this.maxMessages)
           this.cache.splice(0, 1);
         this.cache.push(msg);
       },
