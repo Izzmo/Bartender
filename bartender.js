@@ -1268,16 +1268,20 @@ http.createServer(function(req, res) {
   // determine what page we are on
   switch(params.pathname) {
     case '/':      
-      var path = './templates/home.jade'
-        , str = fs.readFileSync(path, 'utf8')
-        , fn = jade.compile(str, { filename: path, pretty: true });
-            
-      body = fn();
+      var path = './templates/home.jade',
+          str = fs.readFileSync(path, 'utf8'),
+          fn = jade.compile(str, { filename: path, pretty: true }),
+          data = {
+            pageTitle: "Bartender Bot",
+            totalUsers: Object.keys(global.bartender.room.users).length,
+            uptime: global.bartender.getUptime(null, true)
+          }
+      body = fn(data);
       //body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
       //body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
       //body += '<p><a href="/restart">Restart Bartender</a></p>';
       break;
-      
+
     case '/restart':
       if(global.bartender.bot !== null || global.bartender.bot !== undefined) {
         global.bartender.bot.close();
@@ -1285,21 +1289,7 @@ http.createServer(function(req, res) {
       }
       body += '<p>Bartender restarted. <a href="/">Go back</a>.</p>';
       break;
-    
-    case '/remove-dnd24':
-      if(undefined === params.query || undefined === params.query.rid || params.query.rid.length < 10) {
-        code = 400;
-        body += 'Please include a roomid.';
-      }
-      else {
-        if(global.botMaster.remove24hourDND(params.query.rid))
-          body += '<p>Room found and removed.</p>';
-        else
-          body += '<p>Room not found on DND-24 List.</p>';
-      }
-      body += '<p><a href="/">Back</a></p>';
-      break;
-      
+
     default:
       code = 404;
       body = '<h1>404 Not Found</h1><p>Could not find resource.</p>';
