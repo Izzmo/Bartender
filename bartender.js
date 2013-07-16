@@ -204,14 +204,19 @@ global.bartender = {
       }
       return true;
     },
-    setWaitCount: function(userid, count) {
+    setWaitCount: function(userid, username, count) {
       if(count > this.songsWait) return false;
       for(var i = 0; i < this.waitingList.length; i++) {
         if(this.waitingList[i].userid == userid) {
           this.waitingList[i].plays = count;
-          break;
+          return true;
         }
       }
+      // user not found, add to list if not currently dj'ing
+      if(global.bartender.isDj.call(global.bartender, userid))
+        return false;
+      else
+        this.waitingList.push({ userid: userid, username: username, plays: counts });
       return true;
     },
     getDjCounts: function(extended) {
@@ -1015,7 +1020,7 @@ global.bartender = {
           this.bot.pm('Cound not find ' + uname + ' in the room.', userid);
           return false;
         }
-        if(this.moderation.setWaitCount(user.userid, count))
+        if(this.moderation.setWaitCount(user.userid, user.name, count))
           this.bot.pm(user.name + '\'s wait count has been updated to ' + count + '.', userid);
         else
           this.bot.pm('The amount you entered is more than the maximum allowed.', userid);
