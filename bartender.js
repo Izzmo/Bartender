@@ -185,8 +185,15 @@ global.bartender = {
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         if(this.moderation.djPlays[i].plays >= this.moderation.playMonitor.songsPerDj && !this.isCurrentDj.call(global.bartender, this.moderation.djPlays[i].userid)) {
           this.moderation.playMonitor.waitingList.push({ userid: this.moderation.djPlays[i].userid, username: this.moderation.djPlays[i].username, plays: 0 });
-          this.bot.pm('You have played your ' + this.moderation.playMonitor.songsPerDj + ' songs, please /stagedive and wait ' + this.moderation.playMonitor.songsWait + ' songs before getting back on stage.', this.moderation.djPlays[i].userid);
-          this.bot.remDj(this.moderation.djPlays[i].userid);
+          (function() {
+            var userid = global.bartender.moderation.djPlays[i].userid;
+            setTimeout(function() {
+              if(global.bartender.isDj.call(global.bartender, userid)) {
+                global.bartender.bot.pm('You have played your ' + global.bartender.moderation.playMonitor.songsPerDj + ' songs, please wait ' + global.bartender.moderation.playMonitor.songsWait + ' songs before getting back on stage.', userid);
+                global.bartender.bot.remDj(userid);
+              }
+            }, 10000);
+          })();
         }
       }
     },
@@ -1271,11 +1278,17 @@ http.createServer(function(req, res) {
       var path = './templates/home.jade',
           str = fs.readFileSync(path, 'utf8'),
           fn = jade.compile(str, { filename: path, pretty: true }),
+          messages = global.bartender.room.chat.getMessages();
           data = {
             pageTitle: "Bartender Bot",
             totalUsers: Object.keys(global.bartender.room.users).length,
-            uptime: global.bartender.getUptime(null, true)
+            uptime: global.bartender.getUptime(null, true),
+            chat: '<div id="chat-messages">'
           }
+      for(var i = 0, l = messages.length; i < l; i++) {
+        data.chat += '<p>' + messages[i] + '</p>';
+      }
+      data.chat += '</div>';
       body = fn(data);
       //body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
       //body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
