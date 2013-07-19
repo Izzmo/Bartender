@@ -4,7 +4,7 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
-var test_mode = false;
+var test_mode = true;
 
 global.bartender = {
   /**
@@ -1277,22 +1277,14 @@ http.createServer(function(req, res) {
     case '/':      
       var path = './templates/home.jade',
           str = fs.readFileSync(path, 'utf8'),
-          fn = jade.compile(str, { filename: path, pretty: true }),
-          messages = global.bartender.room.chat.getMessages();
+          fn = jade.compile(str, { filename: path, pretty: true });
           data = {
             pageTitle: "Bartender Bot",
             totalUsers: Object.keys(global.bartender.room.users).length,
             uptime: global.bartender.getUptime(null, true),
-            chat: '<div id="chat-messages">'
+            messages: global.bartender.room.chat.getMessages()
           }
-      for(var i = 0, l = messages.length; i < l; i++) {
-        data.chat += '<p>' + messages[i] + '</p>';
-      }
-      data.chat += '</div>';
       body = fn(data);
-      //body += '<p>Total Users: ' + Object.keys(global.bartender.room.users).length + '</p>';
-      //body += '<p>' + global.bartender.getUptime(null, true) + '</p>';
-      //body += '<p><a href="/restart">Restart Bartender</a></p>';
       break;
 
     case '/restart':

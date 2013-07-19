@@ -14,6 +14,8 @@ html(lang="en")
         a(href='/restart') Restart Bartender
     #middle.content
       h2 Chat
-      p =chat
+      #chat
+        each message in messages
+          p(class='message') #{message}
     #right.sidemenu
       h2 Banned Users
