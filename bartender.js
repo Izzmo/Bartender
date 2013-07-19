@@ -1277,12 +1277,12 @@ http.createServer(function(req, res) {
     case '/':      
       var path = './templates/home.jade',
           str = fs.readFileSync(path, 'utf8'),
-          fn = jade.compile(str, { filename: path, pretty: true });
+          fn = jade.compile(str, { filename: path, pretty: true }),
           data = {
             pageTitle: "Bartender Bot",
             totalUsers: Object.keys(global.bartender.room.users).length,
             uptime: global.bartender.getUptime(null, true),
-            messages: global.bartender.room.chat.getMessages(),
+            messages: global.bartender.room.chat.getMessages().reverse(),
             bannedUsers: global.bartender.moderation.bannedUsers
           }
       body = fn(data);
