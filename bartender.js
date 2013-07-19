@@ -4,7 +4,7 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
-var test_mode = true;
+var test_mode = false;
 
 global.bartender = {
   /**
