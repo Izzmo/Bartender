@@ -19,3 +19,6 @@ html(lang="en")
           p(class='message') #{message}
     #right.sidemenu
       h2 Banned Users
+      ul#banned-users
+        each user in bannedUsers
+          li(class='user') #{user.username}

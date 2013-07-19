@@ -1282,7 +1282,8 @@ http.createServer(function(req, res) {
             pageTitle: "Bartender Bot",
             totalUsers: Object.keys(global.bartender.room.users).length,
             uptime: global.bartender.getUptime(null, true),
-            messages: global.bartender.room.chat.getMessages()
+            messages: global.bartender.room.chat.getMessages(),
+            bannedUsers: global.bartender.moderation.bannedUsers
           }
       body = fn(data);
       break;
