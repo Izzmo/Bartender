@@ -2,9 +2,11 @@ doctype 5
 html(lang="en")
   head
     title= pageTitle
+    include home.css
   body
     h1 Bartender Bot
-    #leftSide.sidemenu
+
+    #left.sidemenu
       p
         | Total Users: 
         =totalUsers
@@ -12,13 +14,15 @@ html(lang="en")
         =uptime
       p
         a(href='/restart') Restart Bartender
-    #middle.content
-      h2 Chat
-      #chat
-        each message in messages
-          p(class='message') #{message}
+
     #right.sidemenu
       h2 Banned Users
       ul#banned-users
         each user in bannedUsers
           li(class='user') #{user.username}
+
+    #middle.content
+      h2 Chat
+      #chat
+        each message in messages
+          p(class='message') #{message}
