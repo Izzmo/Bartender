@@ -1065,7 +1065,7 @@ global.bartender = {
         else if(params == "off")
           this.moderation.playMonitor.activated = false;
         else {
-          this.bot.pm('Play Monitor is currently ' + this.moderation.playMonitor.activated ? 'on' : 'off' + '.', userid);
+          this.bot.pm('Play Monitor is currently ' + (this.moderation.playMonitor.activated ? 'on' : 'off') + '.', userid);
           break;
         }
         
