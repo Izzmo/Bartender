@@ -16,6 +16,10 @@ html(lang="en")
         a(href='/restart') Restart Bartender
 
     #right.sidemenu
+      h2 Banned DJ's
+      ul#banned-djs
+        each user in bannedDjs
+          li(class='user') #{user.username}, #{user.duration} hours
       h2 Banned Users
       ul#banned-users
         each user in bannedUsers

@@ -309,6 +309,13 @@ global.bartender = {
       }
       return msg;
     },
+    getBannedDjsAsArray: function() {
+      this.moderation.checkBannedDjs.call(this);
+      for(var i = 0; i < this.moderation.bannedDjs.length; i++) {
+        var duration = (parseInt((this.moderation.bannedDjs[i].time - (new Date()).getTime()) / 360000) / 10);
+        this.moderation.bannedDjs[i].duration = duration;
+      }
+    },
     checkBannedDjs: function() {
       for(var i = 0; i < this.moderation.bannedDjs.length; i++) {
         var duration = ((this.moderation.bannedDjs[i].time - (new Date()).getTime()) / 3600000);
@@ -1287,6 +1294,7 @@ http.createServer(function(req, res) {
             totalUsers: Object.keys(global.bartender.room.users).length,
             uptime: global.bartender.getUptime(null, true),
             messages: global.bartender.room.chat.getMessages().reverse(),
+            bannedDjs: global.bartender.moderation.getBannedDjsAsArray.call(global.bartender),
             bannedUsers: global.bartender.moderation.bannedUsers
           }
       body = fn(data);
