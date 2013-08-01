@@ -26,6 +26,10 @@ html(lang="en")
           li(class='user') #{user.username}
 
     #middle.content
+      h2 DJ's
+      ul#djs
+        each dj in djs
+          li(class='dj') #{dj.name} - #{dj.plays} plays
       h2 Chat
       #chat
         each message in messages

@@ -4,6 +4,7 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
+
 var test_mode = false;
 
 global.bartender = {
@@ -391,6 +392,20 @@ global.bartender = {
     moderatorList: [],
     users: { },
     djs: { },
+    getDjList: function() {
+      var list = [];
+      for(var i = 0, l = this.djs.length; i < l; i++) {
+        var user = this.users[this.djs[i]];
+        for(var ii = 0, ll = global.bartender.moderation.djPlays.length; ii < ll; ii++) {
+          if(global.bartender.moderation.djPlays[ii].userid == user.userid) {
+            user.plays = global.bartender.moderation.djPlays[ii].plays;
+            break;
+          }
+        }
+        list.push(user);
+      }
+      return list;
+    },
     maxDjs: 5,
     currentSong: {
       dj: {
@@ -1298,7 +1313,8 @@ http.createServer(function(req, res) {
             uptime: global.bartender.getUptime(null, true),
             messages: global.bartender.room.chat.getMessages().reverse(),
             bannedDjs: global.bartender.moderation.getBannedDjsAsArray.call(global.bartender),
-            bannedUsers: global.bartender.moderation.bannedUsers
+            bannedUsers: global.bartender.moderation.bannedUsers,
+            djs: global.bartender.room.getDjList()
           }
       body = fn(data);
       break;
