@@ -310,11 +310,13 @@ global.bartender = {
       return msg;
     },
     getBannedDjsAsArray: function() {
+      var list = [];
       this.moderation.checkBannedDjs.call(this);
       for(var i = 0; i < this.moderation.bannedDjs.length; i++) {
         var duration = (parseInt((this.moderation.bannedDjs[i].time - (new Date()).getTime()) / 360000) / 10);
-        this.moderation.bannedDjs[i].duration = duration;
+        list[list.push(this.moderation.bannedDjs[i])].duration = duration;
       }
+      return list;
     },
     checkBannedDjs: function() {
       for(var i = 0; i < this.moderation.bannedDjs.length; i++) {
