@@ -153,7 +153,7 @@ global.bartender = {
       // start the seatOpenTimer until all seats are filled.
       if(this.moderation.playMonitor.seatOpenTimer <= 0) {
         this.moderation.playMonitor.seatOpenTimer = setTimeout(function() {
-          global.bartender.bot.speak("Spot open for too long; all wait counts have been cleared. Anyone is now free to get on deck!");
+          global.bartender.bot.speak(":exclamation: Spot open for too long; all wait counts have been cleared. Anyone is now free to get on deck!");
           global.bartender.moderation.clearWaitCounts();
           global.bartender.moderation.playMonitor.seatOpenTimer = 0;
         }, this.moderation.playMonitor.seatOpenTimerAmount);
