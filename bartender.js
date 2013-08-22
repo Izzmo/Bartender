@@ -1037,7 +1037,7 @@ global.bartender = {
         break;
         
       case 'dance':
-        ttBot.vote('up');
+        this.bot.vote('up');
         //this.bot.speak('bender dance!');
         break;
         
