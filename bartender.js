@@ -79,7 +79,17 @@ global.bartender = {
       songsWait: 2,
       waitingList: [], // { userid, username, plays }
       seatOpenTimerAmount: 30000,
-      seatOpenTimer: 0 // if a seat is open more than seatOpenTimerAmount, then the wait list will be cleared.
+      seatOpenTimer: 0, // if a seat is open more than seatOpenTimerAmount, then the wait list will be cleared.
+      setPlayLimit: function(num) {
+        if(isNaN(parseInt(num))) return false;
+        this.songsPerDj = parseInt(num);
+        global.bartender.moderation.checkDjCounts();
+      },
+      setWaitLimit: function(num) {
+        if(isNaN(parseInt(num))) return false;
+        this.songsWait = parseInt(num);
+        global.bartender.moderation.checkWaitCounts();
+      }
     },
     queue: {
       activated: false,
@@ -1207,6 +1217,22 @@ global.bartender = {
           this.bot.pm(uid + " has been UNbanned from the room.", userid);
         else
           this.bot.pm(uid + " was not found.", userid);
+        break;
+        
+      case 'setplaylimit':
+        if(!this.isMod(userid)) return;
+        if(this.moderation.playMonitor.setPlayLimit(params))
+          this.bot.pm('Play limit has been set to ' + params + ' song' + (params !== "1" ? 's' : '') + '.', userid);
+        else
+          this.bot.pm('The amount you entered is not valid, please try again.', userid);
+        break;
+        
+      case 'setwaitlimit':
+        if(!this.isMod(userid)) return;
+        if(this.moderation.playMonitor.setWaitLimit(params))
+          this.bot.pm('Wait limit has been set to ' + params + ' song' + (params !== "1" ? 's' : '') + '.', userid);
+        else
+          this.bot.pm('The amount you entered is not valid, please try again.', userid);
         break;
     }
   },
