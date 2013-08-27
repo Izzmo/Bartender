@@ -74,7 +74,7 @@ global.bartender = {
     bannedDjs: [], // { userid, username, time } --- Users banned from DJ'ing
     bannedUsers: [], // userid, username, time } --- Users banned from room
     playMonitor: {
-      activated: false,
+      activated: true,
       songsPerDj: 2,
       songsWait: 2,
       waitingList: [], // { userid, username, plays }
