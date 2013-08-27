@@ -83,12 +83,12 @@ global.bartender = {
       setPlayLimit: function(num) {
         if(isNaN(parseInt(num))) return false;
         this.songsPerDj = parseInt(num);
-        global.bartender.moderation.checkDjCounts();
+        global.bartender.moderation.checkDjCounts.call(global.bartender);
       },
       setWaitLimit: function(num) {
         if(isNaN(parseInt(num))) return false;
         this.songsWait = parseInt(num);
-        global.bartender.moderation.checkWaitCounts();
+        global.bartender.moderation.checkWaitCounts.call(global.bartender);
       }
     },
     queue: {
