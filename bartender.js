@@ -835,7 +835,7 @@ global.bartender = {
       case 'info':
       case 'roominfo':
       case 'rules':
-        this.bot.pm("Dubstep Room has a 2-song limit for DJ's. DJ spots are Free-For-All, so please do not request for one unless you are a producer. Once you have played your 2 songs, you must drop for 2 songs until you can get back on deck. If you are idle for 15 minutes while on deck, you will be automatically removed. Once you appear on deck, you have 1-minute to respond to a mod to show you are active. For more information, please take a look at http://tinyurl.com/7tfyfcb", userid);
+        this.bot.pm("Dubstep Room has a " + global.bartender.moderation.playMonitor.songsPerDj + "-song limit for DJ's. DJ spots are Free-For-All, so please do not request for one unless you are a producer. Once you have played your " + global.bartender.moderation.playMonitor.songsPerDj + " songs, you must drop for " + global.bartender.moderation.playMonitor.songsWait + " songs until you can get back on deck. If you are idle for 15 minutes while on deck, you will be automatically removed. Once you appear on deck, you have 1-minute to respond to a mod to show you are active. For more information, please take a look at http://tinyurl.com/7tfyfcb", userid);
         break;
         
       case 'uptime':
@@ -1219,6 +1219,10 @@ global.bartender = {
           this.bot.pm(uid + " has been UNbanned from the room.", userid);
         else
           this.bot.pm(uid + " was not found.", userid);
+        break;
+        
+      case 'getlimits':
+        this.bot.pm('The current play limits are: ' + this.moderation.playMonitor.songsPerDj + ' up, ' + this.moderation.playMonitor.songsWait + ' down.', userid);
         break;
         
       case 'setplaylimit':
