@@ -84,11 +84,13 @@ global.bartender = {
         if(isNaN(parseInt(num))) return false;
         this.songsPerDj = parseInt(num);
         global.bartender.moderation.checkDjCounts.call(global.bartender);
+        return true;
       },
       setWaitLimit: function(num) {
         if(isNaN(parseInt(num))) return false;
         this.songsWait = parseInt(num);
         global.bartender.moderation.checkWaitCounts.call(global.bartender);
+        return true;
       }
     },
     queue: {
