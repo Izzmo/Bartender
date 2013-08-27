@@ -1224,7 +1224,7 @@ global.bartender = {
         if(this.moderation.playMonitor.setPlayLimit(params))
           this.bot.pm('Play limit has been set to ' + params + ' song' + (params !== "1" ? 's' : '') + '.', userid);
         else
-          this.bot.pm('The amount you entered is not valid, please try again.', userid);
+          this.bot.pm('The amount you entered (' + params + ') is not valid, please try again.', userid);
         break;
         
       case 'setwaitlimit':
@@ -1232,7 +1232,7 @@ global.bartender = {
         if(this.moderation.playMonitor.setWaitLimit(params))
           this.bot.pm('Wait limit has been set to ' + params + ' song' + (params !== "1" ? 's' : '') + '.', userid);
         else
-          this.bot.pm('The amount you entered is not valid, please try again.', userid);
+          this.bot.pm('The amount you entered (' + params + ') is not valid, please try again.', userid);
         break;
     }
   },
