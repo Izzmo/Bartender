@@ -1220,7 +1220,8 @@ global.bartender = {
         else
           this.bot.pm(uid + " was not found.", userid);
         break;
-        
+      
+      case 'limits':
       case 'getlimits':
         this.bot.pm('The current play limits are: ' + this.moderation.playMonitor.songsPerDj + ' up, ' + this.moderation.playMonitor.songsWait + ' down.', userid);
         break;
