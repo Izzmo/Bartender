@@ -5,7 +5,7 @@ var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
 
-var test_mode = true;
+var test_mode = false;
 
 /* TODO:
  * - Auto switch off of playmonitor
