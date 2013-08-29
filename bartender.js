@@ -5,7 +5,12 @@ var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
 
-var test_mode = false;
+var test_mode = true;
+
+/* TODO:
+ * - Auto switch off of playmonitor
+ * - Dynamically turn off afk message
+ */
 
 global.bartender = {
   /**
@@ -398,6 +403,7 @@ global.bartender = {
     }
   },
   room: { // holds real-time information for the turntable.fm room
+    afkMessage: true,
     name: '',
     description: '',
     creator: '',
@@ -727,10 +733,9 @@ global.bartender = {
       this.lastSeen[userid] = {time: new Date().getTime(), messaged: false};
   },
   findAFKs: function() {
-    return;
     var time = 0;
     for(var prop in this.lastSeen) {
-      if((this.lastSeen[prop].time < (new Date().getTime() - 900000)) && !this.lastSeen[prop].messaged && !this.isMod(prop) && prop != "4e9718a0a3f7515e5c0339c3") {
+      if(this.room.afkMessage && (this.lastSeen[prop].time < (new Date().getTime() - 900000)) && !this.lastSeen[prop].messaged && !this.isMod(prop) && prop != "4e9718a0a3f7515e5c0339c3") {
         this.lastSeen[prop].messaged = true;
         (function() {
           var userid = prop.valueOf().toString();
@@ -1348,6 +1353,22 @@ http.createServer(function(req, res) {
             bannedDjs: global.bartender.moderation.getBannedDjsAsArray.call(global.bartender),
             bannedUsers: global.bartender.moderation.bannedUsers,
             djs: global.bartender.room.getDjList()
+          }
+      body = fn(data);
+      break;
+      
+    case '/people':
+      var people = [];
+      for(var prop in global.bartender.lastSeen) {
+        var user = global.bartender.room.users[prop];
+        if(user === undefined) continue;
+        people.push({ name: user.name, time: (new Date(global.bartender.lastSeen[prop].time)).toString() })
+      }
+      var path = './templates/people.jade',
+          str = fs.readFileSync(path, 'utf8'),
+          fn = jade.compile(str, { filename: path, pretty: true }),
+          data = {
+            people: people
           }
       body = fn(data);
       break;

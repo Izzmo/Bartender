@@ -1,0 +1,9 @@
+doctype 5
+html(lang="en")
+  head
+    title People
+  body
+    h1 People - Bartender Bot
+
+    each person in people
+      p(class='person') #{person.name} - #{person.time}
