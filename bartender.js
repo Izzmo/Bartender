@@ -5,7 +5,7 @@ var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
 
-var test_mode = false;
+var test_mode = true;
 
 /* TODO:
  * - Auto switch off of playmonitor
@@ -1362,7 +1362,7 @@ http.createServer(function(req, res) {
       for(var prop in global.bartender.lastSeen) {
         var user = global.bartender.room.users[prop];
         if(user === undefined) continue;
-        people.push({ name: user.name, time: (new Date(global.bartender.lastSeen[prop].time)).toString() })
+        people.push({ name: user.name, time: (new Date(global.bartender.lastSeen[prop].time)).toString(), messaged: global.bartender.lastSeen[prop].messaged })
       }
       var path = './templates/people.jade',
           str = fs.readFileSync(path, 'utf8'),

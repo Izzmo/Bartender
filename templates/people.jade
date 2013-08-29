@@ -6,4 +6,7 @@ html(lang="en")
     h1 People - Bartender Bot
 
     each person in people
-      p(class='person') #{person.name} - #{person.time}
+      if person.messaged
+        p(class='person') * #{person.name} - #{person.time}
+      else
+        p(class='person') #{person.name} - #{person.time}
