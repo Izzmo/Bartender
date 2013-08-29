@@ -620,6 +620,9 @@ global.bartender = {
     this.room.currentSong.snags = 0;
     this.room.currentSong.snaggedUsersList = [];
     
+    // find AFKs
+    global.bartender.findAFKs();
+    
     // check to see if song is too long
     clearTimeout(this.songTooLongTimer);
     // check song length and pm if too long (in seconds)
