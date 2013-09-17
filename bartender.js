@@ -1290,7 +1290,8 @@ global.bartender = {
    * ttStats Call Methods
    */
   findSongByTitle: function(title, first, callback) {
-    http.get('http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&title=' + encodeURI(title),
+    var url = 'http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&title=' + encodeURI(title);
+    http.get(url,
       function(res) {
         var data = '';
         res.on('data', function(d) {
@@ -1321,11 +1322,12 @@ global.bartender = {
         }
       }
     ).on('error', function(e) {
-      console.log('Error on findSongByTitle: title: ' + title + ', first: ' + first + ', Error: ' + e);
+      console.log('Error on findSongByTitle: ' + url + ', Error: ' + e);
     });
   },
-  findSongByArtist: function(artist, first, callback) {    
-    http.get('http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&artist=' + encodeURI(artist),
+  findSongByArtist: function(artist, first, callback) {
+    var url = 'http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&artist=' + encodeURI(artist);
+    http.get(url,
       function(res) {
         var data = '';
         res.on('data', function(d) {
@@ -1356,7 +1358,7 @@ global.bartender = {
         }
       }
     ).on('error', function(e) {
-      console.log('Error on findSongByTitle: artist: ' + artist + ', first: ' + first + ', Error: ' + e);
+      console.log('Error on findSongByTitle: ' + url + ', Error: ' + e);
     });
   },
   
