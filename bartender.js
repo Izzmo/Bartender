@@ -1321,7 +1321,7 @@ global.bartender = {
         }
       }
     ).on('error', function(e) {
-      console.log('Error on findSongByTitle: ' + e);
+      console.log('Error on findSongByTitle: title: ' + title + ', first: ' + first + ', Error: ' + e);
     });
   },
   findSongByArtist: function(artist, first, callback) {    
@@ -1356,7 +1356,7 @@ global.bartender = {
         }
       }
     ).on('error', function(e) {
-      console.log('Error on findSongByArtist: ' + e);
+      console.log('Error on findSongByTitle: artist: ' + artist + ', first: ' + first + ', Error: ' + e);
     });
   },
   
