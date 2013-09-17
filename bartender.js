@@ -6,7 +6,7 @@ var fs = require('fs');
 var jade = require('jade');
 var http = require('http');
 
-var test_mode = true;
+var test_mode = false;
 
 /* TODO:
  * - Auto switch off of playmonitor
