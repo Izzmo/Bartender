@@ -1,6 +1,6 @@
 {
   "name": "Bartender",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "author": "Nick George (Izzmo) <me@izzmo.com>",
   "description": "A room moderation bot for turntable.fm.",
   "keywords": [
@@ -20,7 +20,8 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
-    "jade": ">= 0.35.x"
+    "jade": ">= 0.35.x",
+    "request": ">= 2.27.0"
   },
   "devDependencies": {},
   "bundleDependencies": [

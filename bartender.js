@@ -4,7 +4,7 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
-var http = require('http');
+var request = require('request');
 
 var test_mode = false;
 
@@ -1290,75 +1290,71 @@ global.bartender = {
    * ttStats Call Methods
    */
   findSongByTitle: function(title, first, callback) {
-    var url = 'http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&title=' + encodeURI(title);
-    http.get(url,
-      function(res) {
-        var data = '';
-        res.on('data', function(d) {
-          data += d.toString();
-        });
-        res.on('end', next);
-        
-        function next() {
-          var h = JSON.parse(data);
-          if(h.status == "1") {
-            var songEnd = h.time;
-            var d = new Date();
-            var now = (d.getTime() / 1000);
-            var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
-            var timeMsg = "" + lastPlayed + " minutes ago";
-            if(lastPlayed > 60) { // greater than 1 hour
-              lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
-              timeMsg = "" + lastPlayed + " hours ago";
-              if(lastPlayed > 24) { // greater than 24 hours
-                lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
-                timeMsg = "" + lastPlayed + " days ago";
-              }
-            }
-            callback('Found ' + h.artist + '. Song: ' + h.title + '. Played ' + timeMsg + ' by ' + h.name + '.');
-          }
-          else
-            callback('Could not find any results.');
-        }
+    request({
+      url: 'http://www.pinnacleofdestruction.net/tt/backup.php',
+      method: 'GET',
+      qs: {'c': 'search', 't': first, 'title': title}
+    },
+    function (error, response, body) {
+      if(undefined === response) return;
+      if(error || response.statusCode != 200) {
+        console.log('Error when getting search song by title:');
+        console.log(error);
+        return;
       }
-    ).on('error', function(e) {
-      console.log('Error on findSongByTitle: ' + url + ', Error: ' + e);
+      var h = JSON.parse(body);
+      if(h.status == "1") {
+        var songEnd = h.time;
+        var d = new Date();
+        var now = (d.getTime() / 1000);
+        var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
+        var timeMsg = "" + lastPlayed + " minutes ago";
+        if(lastPlayed > 60) { // greater than 1 hour
+          lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
+          timeMsg = "" + lastPlayed + " hours ago";
+          if(lastPlayed > 24) { // greater than 24 hours
+            lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
+            timeMsg = "" + lastPlayed + " days ago";
+          }
+        }
+        callback('Found ' + h.artist + '. Song: ' + h.title + '. Played ' + timeMsg + ' by ' + h.name + '.');
+      }
+      else
+        callback('Could not find any results.');
     });
   },
   findSongByArtist: function(artist, first, callback) {
-    var url = 'http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&artist=' + encodeURI(artist);
-    http.get(url,
-      function(res) {
-        var data = '';
-        res.on('data', function(d) {
-          data += d.toString();
-        });
-        res.on('end', next);
-        
-        function next() {
-          var h = JSON.parse(data);
-          if(h.status == "1") {
-            var songEnd = h.time;
-            var d = new Date();
-            var now = (d.getTime() / 1000);
-            var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
-            var timeMsg = "" + lastPlayed + " minutes ago";
-            if(lastPlayed > 60) { // greater than 1 hour
-              lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
-              timeMsg = "" + lastPlayed + " hours ago";
-              if(lastPlayed > 24) { // greater than 24 hours
-                lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
-                timeMsg = "" + lastPlayed + " days ago";
-              }
-            }
-            callback('Found ' + h.artist + '. Song: ' + h.title + '. Played on ' + timeMsg + ' by ' + h.name + '.');
-          }
-          else
-            callback('Could not find any results.');
-        }
+    request({
+      url: 'http://www.pinnacleofdestruction.net/tt/backup.php',
+      method: 'GET',
+      qs: {'c': 'search', 't': first, 'artist': artist}
+    },
+    function (error, response, body) {
+      if(undefined === response) return;
+      if(error || response.statusCode != 200) {
+        console.log('Error when getting search song by artist:');
+        console.log(error);
+        return;
       }
-    ).on('error', function(e) {
-      console.log('Error on findSongByTitle: ' + url + ', Error: ' + e);
+      var h = JSON.parse(body);
+      if(h.status == "1") {
+        var songEnd = h.time;
+        var d = new Date();
+        var now = (d.getTime() / 1000);
+        var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
+        var timeMsg = "" + lastPlayed + " minutes ago";
+        if(lastPlayed > 60) { // greater than 1 hour
+          lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
+          timeMsg = "" + lastPlayed + " hours ago";
+          if(lastPlayed > 24) { // greater than 24 hours
+            lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
+            timeMsg = "" + lastPlayed + " days ago";
+          }
+        }
+        callback('Found ' + h.artist + '. Song: ' + h.title + '. Played on ' + timeMsg + ' by ' + h.name + '.');
+      }
+      else
+        callback('Could not find any results.');
     });
   },
   
