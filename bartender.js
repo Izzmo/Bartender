@@ -4,8 +4,9 @@ var Bot = require('ttapi');
 var repl = require('repl');
 var fs = require('fs');
 var jade = require('jade');
+var http = require('http');
 
-var test_mode = false;
+var test_mode = true;
 
 /* TODO:
  * - Auto switch off of playmonitor
@@ -775,35 +776,31 @@ global.bartender = {
         break;
         
       case 'search':
-        return;
-        
         var what = params.split(" ");
         if(what.length <= 1) return;
 
         switch(what[0]) {
           case "artist":
-            ttBot.findSongByArtist(params.substr(7).toLowerCase(), 0, function(msg) {ttBot.sendPm(userid, msg);});
+            this.findSongByArtist(params.substr(7).toLowerCase(), 0, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
 
           case "title":
-            ttBot.findSongByTitle(params.substr(6).toLowerCase(), 0, function(msg) {ttBot.sendPm(userid, msg);});
+            this.findSongByTitle(params.substr(6).toLowerCase(), 0, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
         }
         break;
         
       case 'searchfirst':
-        return;
-        
         var what = params.split(" ");
         if(what.length <= 1) return;
 
         switch(what[0]) {
           case "artist":
-            ttBot.findSongByArtist(params.substr(7).toLowerCase(), 1, function(msg) {ttBot.sendPm(userid, msg);});
+            this.findSongByArtist(params.substr(7).toLowerCase(), 1, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
 
           case "title":
-            ttBot.findSongByTitle(params.substr(6).toLowerCase(), 1, function(msg) {ttBot.sendPm(userid, msg);});
+            this.findSongByTitle(params.substr(6).toLowerCase(), 1, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
         }
         break;
@@ -1287,6 +1284,80 @@ global.bartender = {
       callback("Uptime: " + uptime);
     else
       return "Uptime: " + uptime;
+  },
+  
+  /**
+   * ttStats Call Methods
+   */
+  findSongByTitle: function(title, first, callback) {
+    http.get('http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&title=' + encodeURI(title),
+      function(res) {
+        var data = '';
+        res.on('data', function(d) {
+          data += d.toString();
+        });
+        res.on('end', next);
+        
+        function next() {
+          var h = JSON.parse(data);
+          if(h.status == "1") {
+            var songEnd = h.time;
+            var d = new Date();
+            var now = (d.getTime() / 1000);
+            var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
+            var timeMsg = "" + lastPlayed + " minutes ago";
+            if(lastPlayed > 60) { // greater than 1 hour
+              lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
+              timeMsg = "" + lastPlayed + " hours ago";
+              if(lastPlayed > 24) { // greater than 24 hours
+                lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
+                timeMsg = "" + lastPlayed + " days ago";
+              }
+            }
+            callback('Found ' + h.artist + '. Song: ' + h.title + '. Played ' + timeMsg + ' by ' + h.name + '.');
+          }
+          else
+            callback('Could not find any results.');
+        }
+      }
+    ).on('error', function(e) {
+      console.log('Error on findSongByTitle: ' + e);
+    });
+  },
+  findSongByArtist: function(artist, first, callback) {    
+    http.get('http://www.pinnacleofdestruction.net/tt/backup.php?c=search&t=' + encodeURI(first) + '&artist=' + encodeURI(artist),
+      function(res) {
+        var data = '';
+        res.on('data', function(d) {
+          data += d.toString();
+        });
+        res.on('end', next);
+        
+        function next() {
+          var h = JSON.parse(data);
+          if(h.status == "1") {
+            var songEnd = h.time;
+            var d = new Date();
+            var now = (d.getTime() / 1000);
+            var lastPlayed = Math.round(((now - songEnd) / 60) * 10) / 10;  // in minutes
+            var timeMsg = "" + lastPlayed + " minutes ago";
+            if(lastPlayed > 60) { // greater than 1 hour
+              lastPlayed = Math.round((lastPlayed / 60) * 10) / 10; // in hours
+              timeMsg = "" + lastPlayed + " hours ago";
+              if(lastPlayed > 24) { // greater than 24 hours
+                lastPlayed = Math.round((lastPlayed / 24) * 10) / 10; // in days
+                timeMsg = "" + lastPlayed + " days ago";
+              }
+            }
+            callback('Found ' + h.artist + '. Song: ' + h.title + '. Played on ' + timeMsg + ' by ' + h.name + '.');
+          }
+          else
+            callback('Could not find any results.');
+        }
+      }
+    ).on('error', function(e) {
+      console.log('Error on findSongByArtist: ' + e);
+    });
   },
   
   /**
