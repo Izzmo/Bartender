@@ -781,12 +781,12 @@ global.bartender = {
 
         switch(what[0]) {
           case "artist":
-            this.pm('Searching...', userid);
+            this.bot.pm('Searching...', userid);
             this.findSongByArtist(params.substr(7).toLowerCase(), 0, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
 
           case "title":
-            this.pm('Searching...', userid);
+            this.bot.pm('Searching...', userid);
             this.findSongByTitle(params.substr(6).toLowerCase(), 0, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
         }
@@ -798,12 +798,12 @@ global.bartender = {
 
         switch(what[0]) {
           case "artist":
-            this.pm('Searching...', userid);
+            this.bot.pm('Searching...', userid);
             this.findSongByArtist(params.substr(7).toLowerCase(), 1, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
 
           case "title":
-            this.pm('Searching...', userid);
+            this.bot.pm('Searching...', userid);
             this.findSongByTitle(params.substr(6).toLowerCase(), 1, function(msg) {global.bartender.bot.pm(msg, userid);});
             break;
         }
