@@ -103,6 +103,9 @@ global.bartender = {
       activated: false,
       list: []
     },
+    clearDjList: function() {
+      this.djPlays = [];
+    },
     addDj: function(userid) {
       // check to see if user is banned
       if(this.moderation.djBanned.call(this, userid)) {
@@ -273,24 +276,6 @@ global.bartender = {
         msg += user.name + ': ' + (this.moderation.playMonitor.songsWait - this.moderation.playMonitor.waitingList[i].plays) + ' songs';
       }
       return msg;
-    },
-    checkDjList: function() {
-      // get updated dj list
-      var djRemoveList = [];
-      for(var i = 0; i < this.moderation.djPlays.length; i++) {
-        var found = false;
-        for(var j = 0; j < this.room.djs.length; j++) {
-          if(this.moderation.djPlays[j].userid == this.room.djs[i]) {
-            found = true;
-            break;
-          }
-        }
-        if(!found)
-          djRemoveList.push(i);
-      }
-      for(var i = 0; i < djRemoveList.length; i++) {
-        this.moderation.djPlays.splice(djRemoveList.pop(), 1);
-      }
     },
     addDjBan: function(userid, username, time) {
       // check to see if user is already in banned list
@@ -531,6 +516,7 @@ global.bartender = {
           global.bartender.registered({ "user": [ d.users[i] ] }, true);
         
         // add current dj's
+        global.bartender.moderation.clearDjList();
         for(i = 0, l = d.djids.length; i < l; i++)
           global.bartender.moderation.addDj.call(global.bartender, d.djids[i]);
       }
@@ -641,9 +627,6 @@ global.bartender = {
       global.bartender.bot.pm('Looks like your song froze, so we had to remove you from the deck.', global.bartender.room.currentSong.dj.id);
       global.bartender.bot.remDj(global.bartender.room.currentSong.dj.id);
     }, (this.room.currentSong.length + 15) * 1000);
-    
-    // moderation actions
-    this.moderation.checkDjList.call(this);
     
     // add to song count of current dj
     this.moderation.addPlay.call(this, d.room.metadata.current_song.djid);
@@ -1452,7 +1435,7 @@ http.createServer(function(req, res) {
     case '/restart':
       if(global.bartender.bot !== null || global.bartender.bot !== undefined) {
         global.bartender.bot.close();
-        global.bartender.init();
+        global.bartender.init(test_mode);
       }
       body += '<p>Bartender restarted. <a href="/">Go back</a>.</p>';
       break;
