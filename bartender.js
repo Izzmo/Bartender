@@ -275,22 +275,22 @@ global.bartender = {
       return msg;
     },
     checkDjList: function() {
-      return; // test to see if we really need this
       // get updated dj list
-      var djList = [];
+      var djRemoveList = [];
       for(var i = 0; i < this.moderation.djPlays.length; i++) {
         var found = false;
         for(var j = 0; j < this.room.djs.length; j++) {
           if(this.moderation.djPlays[j].userid == this.room.djs[i]) {
             found = true;
-            djList.push(this.moderation.djPlays[j]);
             break;
           }
         }
         if(!found)
-          djList.push({ userid: this.room.djs[i], plays: 0, timer: 0 });
+          djRemoveList.push(i);
       }
-      this.moderation.djPlays = djList;
+      for(var i = 0; i < djRemoveList.length; i++) {
+        this.moderation.djPlays.splice(djRemoveList.pop(), 1);
+      }
     },
     addDjBan: function(userid, username, time) {
       // check to see if user is already in banned list
