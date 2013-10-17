@@ -8,6 +8,10 @@ var request = require('request');
 
 var test_mode = false;
 
+process.on('SIGTERM', function() {
+  console.log('caught sigterm.');
+});
+
 /* TODO:
  * - Auto switch off of playmonitor
  * - Dynamically turn off afk message
